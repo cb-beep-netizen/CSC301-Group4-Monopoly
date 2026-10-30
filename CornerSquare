@@ -1,7 +1,0 @@
-package monopoly;
-
-class CornerSquare extends Square {
-    public CornerSquare(String name) { super(name); }
-    @Override
-    public void land(Game game, Player player) {}
-}
