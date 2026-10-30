@@ -1,0 +1,78 @@
+package monopoly;
+
+public class Board {
+    public CircularDoublyLinkedList<Square> squares;
+    public Node<Square> goNode;
+    public Node<Square> jailNode;
+
+    public Board() {
+        this.squares = new CircularDoublyLinkedList<>();
+    }
+
+    // 1. Mandatory recursive step() method[cite: 1]
+    public Node<Square> step(Node<Square> current, int steps, Player p) {
+        if (steps == 0) {
+            return current;
+        }
+        if (steps > 0) {
+            // Check if passing or landing on GO moving forward
+            if (current.next.data.getName().equals("GO")) {
+                p.cash += 200; // Salary[cite: 1]
+                // Note: The GameLogger call for SALARY should ideally be triggered by Game, 
+                // but updating cash here aligns with movement rules.
+            }
+            return step(current.next, steps - 1, p);
+        } else {
+            // Moving backward (no salary paid when moving backward)[cite: 1]
+            return step(current.prev, steps + 1, p);
+        }
+    }
+
+    // 2. Mandatory recursive ownsGroup() method[cite: 1]
+    public boolean ownsGroup(Node<Square> current, Node<Square> start, String color, Player p) {
+        if (current == start && current != squares.getHead()) { // Avoid immediate termination on head check
+            // To properly track full circle, we use a helper or check bounds. 
+            // Here we evaluate once around starting from start node.
+        }
+        return ownsGroupHelper(current, current, start, color, p);
+    }
+
+    private boolean ownsGroupHelper(Node<Square> current, Node<Square> original, Node<Square> start, String color, Player p) {
+        if (current.data instanceof PropertySquare) {
+            PropertySquare prop = (PropertySquare) current.data;
+            if (prop.color.equalsIgnoreCase(color)) {
+                if (prop.owner != p) {
+                    return false;
+                }
+            }
+        }
+        if (current.next == start) {
+            return true; // Completed full circle around the board
+        }
+        return ownsGroupHelper(current.next, original, start, color, p);
+    }
+
+    // 3. Mandatory recursive findByName() method[cite: 1]
+    public Node<Square> findByName(Node<Square> current, String name, int remaining) {
+        if (remaining < 0 || current == null) {
+            return null;
+        }
+        if (current.data.getName().equalsIgnoreCase(name)) {
+            return current;
+        }
+        return findByName(current.next, name, remaining - 1);
+    }
+
+    // 4. Mandatory recursive findNearest() method[cite: 1]
+    public Node<Square> findNearest(Node<Square> current, String type, int remaining) {
+        if (remaining < 0 || current == null) {
+            return null;
+        }
+        // Check if current node matches the requested type (e.g., "TRANSIT")
+        if (type.equalsIgnoreCase("TRANSIT") && current.data instanceof TransitSquare) {
+            return current;
+        }
+        // Add other type checks here if needed (e.g., PROPERTY, TAX, etc.)
+        return findNearest(current.next, type, remaining - 1);
+    }
+}

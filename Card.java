@@ -1,0 +1,15 @@
+package monopoly;
+
+public class Card {
+    public String id;
+    public String text;
+    public String effect;
+    public String argument;
+
+    public Card(String id, String text, String effect, String argument) {
+        this.id = id;
+        this.text = text;
+        this.effect = effect;
+        this.argument = argument;
+    }
+}
