@@ -21,7 +21,7 @@ import java.util.Scanner;
  *   --color / --no-color   force colours on or off (default: detected)
  *   --ascii          draw the board with + - | instead of box-drawing characters
  *   --log-lines      board view shows raw log lines instead of plain sentences
- * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14 and 01.19 (Claude). Reviewed and understood by: ______
+ * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14 and 01.22 (Claude). Reviewed and understood by: ______
  */
 public class Main {
 

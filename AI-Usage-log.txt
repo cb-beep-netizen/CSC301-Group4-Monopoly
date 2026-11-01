@@ -831,6 +831,50 @@ looks like.  post this image, you include the explanation part.
    content required by brief Section 9 (where/why each structure is used,
    alternatives rejected, recursion termination).
 
+[Prompt 01.26 | 2026-11-01 (time not recorded) | CS]
+pls ignore uploading .vscode/settings.json,  i was trying to use claude cowork
+project module to do it
+
+[AI actions 01.26]
+ - Marked .vscode/settings.json with git update-index --skip-worktree, for
+   this folder only, so syncs no longer upload the local change. The local
+   chat.disableAIFeatures stays false; the copy on GitHub stays true.
+
+[AI response 01.26 - summary]
+ - Confirmed the file is skipped and explained how to undo the setting.
+ - Noted that use of Claude Cowork may also need logging (brief 7.3).
+
+[Prompt 01.27 | 2026-11-01 (time not recorded) | CS]
+Pls check from changes to the folder and upload to the github repo branch
+
+[AI actions 01.27]
+ - Found 7 changed and 3 new files (standings feature, both PDF reports,
+   screenshots, AI log Prompts 01.22-01.25).
+ - Ran the tests (53 passed, 0 failed) and the constraint check (PASS).
+   Scanned the changes, the PDF text and the screenshots for e-mail addresses
+   and PC user names; none found.
+ - Pushed commit 857f200 to CS-Monopoly. The pushed PDFs were byte-identical
+   to the local files.
+
+[AI response 01.27 - summary]
+ - Pointed out that the code and design note D21 credited the standings
+   feature to Prompt 01.19, but the log records it as Prompt 01.22.
+ - Pointed out that the public PDFs show player and member names.
+ - Noted that the AI usage PDF predates this entry and that this session may
+   need its own row in Part A and its own export (brief 7.1).
+
+[Prompt 01.28 | 2026-11-01 19:59 GST | CS]
+yes
+
+[AI actions 01.28]
+ - CS agreed to fix the prompt numbers and add the missing log entries.
+ - Changed the references from Prompt 01.19 to Prompt 01.22 in
+   code\BoardView.java, code\Main.java, tests\GameTests.java and design note
+   D21 (comments and notes only; no game behaviour changed).
+ - Logged Prompts 01.26 to 01.28 here. They are numbered in the order they
+   were logged; the two untimed prompts came from the separate session noted
+   at Prompt 01.23.
+
 
 ================================================================================
  PART C - AI REFLECTION (1 to 2 pages; minimum three cases)

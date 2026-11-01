@@ -6,7 +6,7 @@ import java.util.Random;
  * Uses scripted dice and unshuffled decks so every expected log line is known.
  * Uses only ArrayList and Random from java.util, like the game code.
  * Run: java -cp bin;tests-bin GameTests <test-board> <board> <cards>
- * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14, 01.15 and 01.19 (Claude).
+ * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14, 01.15 and 01.22 (Claude).
  */
 public class GameTests {
     static int pass = 0, fail = 0;

@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * VS Code, and the classic Windows 10/11 console once enableWindowsColour()
  * has run); otherwise the same screen is drawn without colour. Each player has
  * a colour; squares they own are tinted with it and show their name.
- * AI log: Conversation 01, Prompt 01.14, updated in Prompts 01.15 and 01.19 (Claude). Reviewed and understood by: ______
+ * AI log: Conversation 01, Prompt 01.14, updated in Prompts 01.15 and 01.22 (Claude). Reviewed and understood by: ______
  */
 public class BoardView {
     private static final int CW = 13;   // inner width of a square cell
