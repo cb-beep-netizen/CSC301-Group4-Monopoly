@@ -36,7 +36,7 @@ public class Portal extends Square {
     }
 
     // Recursive helper to count steps forward
-    private int countForwardSteps(Node<Square> current, PortalSquare target, int steps) {
+    private int countForwardSteps(Node<Square> current, Portal target, int steps) {
         if (current.data == target) {
             return steps;
         }
@@ -44,10 +44,20 @@ public class Portal extends Square {
     }
 
     // Recursive helper to count steps backward
-    private int countBackwardSteps(Node<Square> current, PortalSquare target, int steps) {
+    private int countBackwardSteps(Node<Square> current, Portal target, int steps) {
         if (current.data == target) {
             return steps;
         }
         return countBackwardSteps(current.prev, target, steps + 1);
     }
+    
+  //--------------------------------------BONUS---------------------------------
+        // Dynamic wormhole re-routing method
+        public void entangleWith(Portal targetPortal) {
+            this.otherPortal = targetPortal;
+            targetPortal.otherPortal = this;
+            System.out.println("✨ Quantum Entanglement Activated between " + this.getName() + " and " + targetPortal.getName() + "!");
+        }
+    }
+    //-----------------------------------------------------------------------------
 }
