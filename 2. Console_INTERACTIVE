@@ -1,0 +1,1492 @@
+=================================================
+   CSC301 INTERACTIVE MONOPOLY BOARD GAME        
+=================================================
+
+Current Working Directory: C:\Users\ridab\OneDrive\Desktop\SPRING 26\Programming 2\Lab2\Monopoly
+Checking path: C:\Users\ridab\OneDrive\Desktop\SPRING 26\Programming 2\Lab2\Monopoly\src\monopoly\board.txt -> Exists? false
+Checking path: C:\Users\ridab\OneDrive\Desktop\SPRING 26\Programming 2\Lab2\Monopoly\src\monopoly\board.txt -> Exists? false
+Checking path: C:\Users\ridab\OneDrive\Desktop\SPRING 26\Programming 2\Lab2\Monopoly\board.txt -> Exists? false
+Checking path: C:\Users\ridab\OneDrive\Desktop\Fall Year\CSC301\Monopoly\src\monopoly\board.txt -> Exists? true
+Successfully loading board from: C:\Users\ridab\OneDrive\Desktop\Fall Year\CSC301\Monopoly\src\monopoly\board.txt
+Board loaded successfully with 11 squares.
+
+Enter number of players (2 to 4): 2
+Enter name for Player 1: Rida
+Enter name for Player 2: Nida
+
+=================================================
+ GAME STARTING! Press [ENTER] after each turn.   
+=================================================
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare) * <-- [Ri][Ni]
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 1 | Current Player: Rida (Cash: $1500)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): status
+
+--- LIVE PLAYER STATUS ---
+Rida -> Cash: $1500 | Net Worth: $1500
+Nida -> Cash: $1500 | Net Worth: $1500
+--------------------------
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare) * <-- [Ri][Ni]
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 1 | Current Player: Nida (Cash: $1500)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|1|Nida
+ROLL|Nida|6|2
+MOVE|Nida|GO|Jail
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare) * <-- [Ri]
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare) <-- [Ni]
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 2 | Current Player: Rida (Cash: $1500)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|2|Rida
+ROLL|Rida|6|6
+MOVE|Rida|GO|Corniche Road
+BUY|Rida|Corniche Road|1640
+ROLL|Rida|3|1
+MOVE|Rida|Corniche Road|Metro Red Line
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare) <-- [Ri]
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare) * <-- [Ni]
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 3 | Current Player: Nida (Cash: $1500)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|3|Nida
+ROLL|Nida|2|6
+MOVE|Nida|Jail|Metro Red Line
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare) * <-- [Ri][Ni]
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 4 | Current Player: Rida (Cash: $1640)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|4|Rida
+ROLL|Rida|3|2
+MOVE|Rida|Metro Red Line|Go To Jail
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare) * <-- [Ni]
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare) <-- [Ri]
+======================================================
+
+-------------------------------------------------
+Turn 5 | Current Player: Nida (Cash: $1700)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|5|Nida
+ROLL|Nida|1|3
+MOVE|Nida|Metro Red Line|Free Parking
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) <-- [Ni]
+[10] Go To Jail         (CornerSquare) * <-- [Ri]
+======================================================
+
+-------------------------------------------------
+Turn 6 | Current Player: Rida (Cash: $1640)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|6|Rida
+ROLL|Rida|5|5
+MOVE|Rida|Go To Jail|Free Parking
+ROLL|Rida|2|4
+MOVE|Rida|Free Parking|Municipality Fee
+TAX|Rida|100|1940
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare) <-- [Ri]
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) * <-- [Ni]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 7 | Current Player: Nida (Cash: $1700)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): status
+
+--- LIVE PLAYER STATUS ---
+Rida -> Cash: $1940 | Net Worth: $2000
+Nida -> Cash: $1700 | Net Worth: $1700
+--------------------------
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare) * <-- [Ri]
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) <-- [Ni]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 7 | Current Player: Rida (Cash: $1940)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|7|Rida
+ROLL|Rida|3|4
+MOVE|Rida|Municipality Fee|GO
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare) <-- [Ri]
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) * <-- [Ni]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 8 | Current Player: Nida (Cash: $1700)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|8|Nida
+ROLL|Nida|5|3
+MOVE|Nida|Free Parking|Yas Island
+BUY|Nida|Yas Island|1800
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare) * <-- [Ri]
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) <-- [Ni]
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 9 | Current Player: Rida (Cash: $2140)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|9|Rida
+ROLL|Rida|2|1
+MOVE|Rida|GO|Al Bateen
+BUY|Rida|Al Bateen|2080
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare) <-- [Ri]
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) * <-- [Ni]
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 10 | Current Player: Nida (Cash: $1800)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|10|Nida
+ROLL|Nida|1|5
+MOVE|Nida|Yas Island|Corniche Road
+RENT|Nida|Rida|8|1992|2088
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare) <-- [Ni]
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare) * <-- [Ri]
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 11 | Current Player: Rida (Cash: $2088)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|11|Rida
+ROLL|Rida|2|4
+MOVE|Rida|Al Bateen|Free Parking
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare) * <-- [Ni]
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) <-- [Ri]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 12 | Current Player: Nida (Cash: $1992)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|12|Nida
+ROLL|Nida|3|5
+MOVE|Nida|Corniche Road|Free Parking
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) * <-- [Ri][Ni]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 13 | Current Player: Rida (Cash: $2088)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|13|Rida
+ROLL|Rida|4|3
+MOVE|Rida|Free Parking|Metro Red Line
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare) <-- [Ri]
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) * <-- [Ni]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 14 | Current Player: Nida (Cash: $1992)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|14|Nida
+ROLL|Nida|5|5
+MOVE|Nida|Free Parking|Jail
+ROLL|Nida|1|1
+MOVE|Nida|Jail|Go To Jail
+ROLL|Nida|1|5
+MOVE|Nida|Go To Jail|Metro Red Line
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare) * <-- [Ri][Ni]
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 15 | Current Player: Rida (Cash: $2288)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|15|Rida
+ROLL|Rida|2|3
+MOVE|Rida|Metro Red Line|Go To Jail
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare) * <-- [Ni]
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare) <-- [Ri]
+======================================================
+
+-------------------------------------------------
+Turn 16 | Current Player: Nida (Cash: $2392)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|16|Nida
+ROLL|Nida|4|4
+MOVE|Nida|Metro Red Line|Community Chest
+ROLL|Nida|6|3
+MOVE|Nida|Community Chest|GO
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare) <-- [Ni]
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare) * <-- [Ri]
+======================================================
+
+-------------------------------------------------
+Turn 17 | Current Player: Rida (Cash: $2288)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|17|Rida
+ROLL|Rida|1|6
+MOVE|Rida|Go To Jail|Yas Island
+RENT|Rida|Nida|16|2472|2808
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare) * <-- [Ni]
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) <-- [Ri]
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 18 | Current Player: Nida (Cash: $2808)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|18|Nida
+ROLL|Nida|3|6
+MOVE|Nida|GO|Free Parking
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) * <-- [Ri]
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) <-- [Ni]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 19 | Current Player: Rida (Cash: $2472)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|19|Rida
+ROLL|Rida|6|1
+MOVE|Rida|Yas Island|Community Chest
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare) <-- [Ri]
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) * <-- [Ni]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 20 | Current Player: Nida (Cash: $2808)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|20|Nida
+ROLL|Nida|4|1
+MOVE|Nida|Free Parking|Al Bateen
+RENT|Nida|Rida|12|2996|2684
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare) * <-- [Ri]
+[ 3] Al Bateen          (PropertySquare) <-- [Ni]
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 21 | Current Player: Rida (Cash: $2684)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|21|Rida
+ROLL|Rida|6|6
+MOVE|Rida|Community Chest|Al Bateen
+ROLL|Rida|6|2
+MOVE|Rida|Al Bateen|GO
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare) <-- [Ri]
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare) * <-- [Ni]
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 22 | Current Player: Nida (Cash: $2996)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|22|Nida
+ROLL|Nida|1|3
+MOVE|Nida|Al Bateen|Chance
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare) * <-- [Ri]
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare) <-- [Ni]
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 23 | Current Player: Rida (Cash: $3084)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|23|Rida
+ROLL|Rida|2|6
+MOVE|Rida|GO|Jail
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare) * <-- [Ni]
+[ 8] Jail               (CornerSquare) <-- [Ri]
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 24 | Current Player: Nida (Cash: $2996)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|24|Nida
+ROLL|Nida|3|4
+MOVE|Nida|Chance|Al Bateen
+RENT|Nida|Rida|12|3184|3096
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare) <-- [Ni]
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare) * <-- [Ri]
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 25 | Current Player: Rida (Cash: $3096)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|25|Rida
+ROLL|Rida|5|4
+MOVE|Rida|Jail|Yas Island
+RENT|Rida|Nida|16|3280|3200
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare) * <-- [Ni]
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) <-- [Ri]
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 26 | Current Player: Nida (Cash: $3200)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|26|Nida
+ROLL|Nida|2|4
+MOVE|Nida|Al Bateen|Free Parking
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) * <-- [Ri]
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) <-- [Ni]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 27 | Current Player: Rida (Cash: $3280)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|27|Rida
+ROLL|Rida|3|1
+MOVE|Rida|Yas Island|Go To Jail
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) * <-- [Ni]
+[10] Go To Jail         (CornerSquare) <-- [Ri]
+======================================================
+
+-------------------------------------------------
+Turn 28 | Current Player: Nida (Cash: $3200)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|28|Nida
+ROLL|Nida|2|2
+MOVE|Nida|Free Parking|Community Chest
+ROLL|Nida|3|6
+MOVE|Nida|Community Chest|GO
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare) <-- [Ni]
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare) * <-- [Ri]
+======================================================
+
+-------------------------------------------------
+Turn 29 | Current Player: Rida (Cash: $3280)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|29|Rida
+ROLL|Rida|3|2
+MOVE|Rida|Go To Jail|Municipality Fee
+TAX|Rida|100|3380
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare) * <-- [Ni]
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare) <-- [Ri]
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 30 | Current Player: Nida (Cash: $3600)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|30|Nida
+ROLL|Nida|6|6
+MOVE|Nida|GO|Corniche Road
+RENT|Nida|Rida|8|3792|3388
+ROLL|Nida|5|1
+MOVE|Nida|Corniche Road|Chance
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare) * <-- [Ri]
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare) <-- [Ni]
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 31 | Current Player: Rida (Cash: $3388)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|31|Rida
+ROLL|Rida|3|2
+MOVE|Rida|Municipality Fee|Free Parking
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare) * <-- [Ni]
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) <-- [Ri]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 32 | Current Player: Nida (Cash: $3792)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|32|Nida
+ROLL|Nida|5|4
+MOVE|Nida|Chance|Metro Red Line
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare) <-- [Ni]
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) * <-- [Ri]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 33 | Current Player: Rida (Cash: $3388)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|33|Rida
+ROLL|Rida|1|4
+MOVE|Rida|Free Parking|Al Bateen
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare) <-- [Ri]
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare) * <-- [Ni]
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 34 | Current Player: Nida (Cash: $3992)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|34|Nida
+ROLL|Nida|2|6
+MOVE|Nida|Metro Red Line|Community Chest
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare) <-- [Ni]
+[ 3] Al Bateen          (PropertySquare) * <-- [Ri]
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 35 | Current Player: Rida (Cash: $3588)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|35|Rida
+ROLL|Rida|2|3
+MOVE|Rida|Al Bateen|Jail
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare) * <-- [Ni]
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare) <-- [Ri]
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 36 | Current Player: Nida (Cash: $4192)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|36|Nida
+ROLL|Nida|2|4
+MOVE|Nida|Community Chest|Jail
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare) * <-- [Ri][Ni]
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 37 | Current Player: Rida (Cash: $3588)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|37|Rida
+ROLL|Rida|3|4
+MOVE|Rida|Jail|Municipality Fee
+TAX|Rida|100|3688
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare) <-- [Ri]
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare) * <-- [Ni]
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 38 | Current Player: Nida (Cash: $4192)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|38|Nida
+ROLL|Nida|4|1
+MOVE|Nida|Jail|Community Chest
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare) <-- [Ni]
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare) * <-- [Ri]
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 39 | Current Player: Rida (Cash: $3688)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|39|Rida
+ROLL|Rida|5|3
+MOVE|Rida|Municipality Fee|Corniche Road
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare) <-- [Ri]
+[ 2] Community Chest    (CardSquare) * <-- [Ni]
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 40 | Current Player: Nida (Cash: $4392)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|40|Nida
+ROLL|Nida|2|5
+MOVE|Nida|Community Chest|Free Parking
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare) * <-- [Ri]
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) <-- [Ni]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 41 | Current Player: Rida (Cash: $3888)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|41|Rida
+ROLL|Rida|1|4
+MOVE|Rida|Corniche Road|Yas Island
+RENT|Rida|Nida|16|3872|4408
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) <-- [Ri]
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare) * <-- [Ni]
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 42 | Current Player: Nida (Cash: $4408)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|42|Nida
+ROLL|Nida|5|1
+MOVE|Nida|Free Parking|Municipality Fee
+TAX|Nida|100|4508
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare) <-- [Ni]
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) * <-- [Ri]
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 43 | Current Player: Rida (Cash: $3872)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|43|Rida
+ROLL|Rida|6|5
+MOVE|Rida|Yas Island|Yas Island
+RENT|Rida|Nida|16|4056|4524
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare) * <-- [Ni]
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) <-- [Ri]
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 44 | Current Player: Nida (Cash: $4524)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|44|Nida
+ROLL|Nida|6|2
+MOVE|Nida|Municipality Fee|Corniche Road
+RENT|Nida|Rida|8|4716|4064
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare) <-- [Ni]
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) * <-- [Ri]
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 45 | Current Player: Rida (Cash: $4064)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|45|Rida
+ROLL|Rida|5|3
+MOVE|Rida|Yas Island|Al Bateen
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare) * <-- [Ni]
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare) <-- [Ri]
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 46 | Current Player: Nida (Cash: $4716)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|46|Nida
+ROLL|Nida|3|4
+MOVE|Nida|Corniche Road|Jail
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare) * <-- [Ri]
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare) <-- [Ni]
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 47 | Current Player: Rida (Cash: $4264)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|47|Rida
+ROLL|Rida|5|4
+MOVE|Rida|Al Bateen|Corniche Road
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare) <-- [Ri]
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare) * <-- [Ni]
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 48 | Current Player: Nida (Cash: $4716)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|48|Nida
+ROLL|Nida|2|3
+MOVE|Nida|Jail|Community Chest
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare) * <-- [Ri]
+[ 2] Community Chest    (CardSquare) <-- [Ni]
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 49 | Current Player: Rida (Cash: $4464)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|49|Rida
+ROLL|Rida|4|1
+MOVE|Rida|Corniche Road|Yas Island
+RENT|Rida|Nida|16|4448|4932
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare) * <-- [Ni]
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) <-- [Ri]
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 50 | Current Player: Nida (Cash: $4932)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|50|Nida
+ROLL|Nida|3|2
+MOVE|Nida|Community Chest|Chance
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) * <-- [Ri]
+[ 7] Chance             (CardSquare) <-- [Ni]
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 51 | Current Player: Rida (Cash: $4448)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|51|Rida
+ROLL|Rida|4|5
+MOVE|Rida|Yas Island|Municipality Fee
+TAX|Rida|100|4548
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare) <-- [Ri]
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare) * <-- [Ni]
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 52 | Current Player: Nida (Cash: $4932)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|52|Nida
+ROLL|Nida|6|2
+MOVE|Nida|Chance|Municipality Fee
+TAX|Nida|100|5032
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare) * <-- [Ri][Ni]
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 53 | Current Player: Rida (Cash: $4548)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|53|Rida
+ROLL|Rida|2|4
+MOVE|Rida|Municipality Fee|Go To Jail
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare) * <-- [Ni]
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare) <-- [Ri]
+======================================================
+
+-------------------------------------------------
+Turn 54 | Current Player: Nida (Cash: $5032)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|54|Nida
+ROLL|Nida|4|5
+MOVE|Nida|Municipality Fee|Community Chest
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare) <-- [Ni]
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare) * <-- [Ri]
+======================================================
+
+-------------------------------------------------
+Turn 55 | Current Player: Rida (Cash: $4548)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|55|Rida
+ROLL|Rida|4|2
+MOVE|Rida|Go To Jail|Metro Red Line
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare) * <-- [Ni]
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare) <-- [Ri]
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 56 | Current Player: Nida (Cash: $5232)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|56|Nida
+ROLL|Nida|2|6
+MOVE|Nida|Community Chest|Go To Jail
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare) * <-- [Ri]
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare) <-- [Ni]
+======================================================
+
+-------------------------------------------------
+Turn 57 | Current Player: Rida (Cash: $4748)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|57|Rida
+ROLL|Rida|2|5
+MOVE|Rida|Metro Red Line|Corniche Road
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare) <-- [Ri]
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare)
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare) * <-- [Ni]
+======================================================
+
+-------------------------------------------------
+Turn 58 | Current Player: Nida (Cash: $5232)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|58|Nida
+ROLL|Nida|3|1
+MOVE|Nida|Go To Jail|Al Bateen
+RENT|Nida|Rida|12|5420|4960
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare) * <-- [Ri]
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare) <-- [Ni]
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare)
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 59 | Current Player: Rida (Cash: $4960)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|59|Rida
+ROLL|Rida|3|2
+MOVE|Rida|Corniche Road|Yas Island
+RENT|Rida|Nida|16|4944|5436
+
+
+
+=================== GAME BOARD MAP ===================
+[ 0] GO                 (CornerSquare)
+[ 1] Corniche Road      (PropertySquare)
+[ 2] Community Chest    (CardSquare)
+[ 3] Al Bateen          (PropertySquare) * <-- [Ni]
+[ 4] Municipality Fee   (TaxSquare)
+[ 5] Metro Red Line     (TransitSquare)
+[ 6] Yas Island         (PropertySquare) <-- [Ri]
+[ 7] Chance             (CardSquare)
+[ 8] Jail               (CornerSquare)
+[ 9] Free Parking       (CornerSquare)
+[10] Go To Jail         (CornerSquare)
+======================================================
+
+-------------------------------------------------
+Turn 60 | Current Player: Nida (Cash: $5436)
+Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): 
+TURN|60|Nida
+ROLL|Nida|6|1
+MOVE|Nida|Al Bateen|Go To Jail
+
+
+
+=================================================
+              FINAL GAME RANKINGS                
+=================================================
+END|MAX_TURNS
+RANK|1|Nida|5536
+RANK|2|Rida|5064
