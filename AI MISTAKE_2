@@ -1,0 +1,56 @@
+WAIT 1 MINUTE, HOW CAN YOU COME OUT OF JAIL WITHOUT ROLLING A DOUBLE NO ON THE DICE, AND JUST ROLL OUT?
+
+------------------------------------------------
+
+Turn 4 | Current Player: Blobby (Cash: $1700)
+
+Action [ENTER / status / undo / quit]:
+
+TURN|4|Blobby
+
+ROLL|Blobby|6|1
+
+MOVE|Blobby|Jail|Municipality Fee
+
+TAX|Blobby|100|1800
+
+You spotted a classic bug! Excellent catch.
+
+In your console log:ROLL|Blobby|6|1 -> MOVE|Blobby|Jail|Municipality Fee
+
+Blobby rolled a 6 and 1 (which are not doubles), yet the program let Blobby walk right out of Jail and move across the board. According to official Monopoly and project rules, a player trapped in Jail can only escape by rolling doubles, paying a $50 fine, or using a "Get Out of Jail Free" card!
+
+Why did this happen?
+Your current takeTurn() or Jail square resolution method in Game.java is likely treating Jail as a normal passing square instead of checking if the player is actually in Jail and enforcing the double/fine rule.
+
+Let's fix your Game.java jail-handling logic so that:
+
+If a player is in Jail, they must roll doubles, pay the $50 fine, or use their JAIL_FREE card.
+
+If they roll non-doubles and haven't paid/used a card, they stay in Jail for that turn.
+
+How to Fix It in Game.java
+Check your takeTurn method where Jail squares are handled. It should look like this:
+
+Java
+// Inside Game.java or Player movement logic:
+if (current.isInJail) {
+    // Player is in Jail - must check for doubles or fine
+    int d1 = rollDice();
+    int d2 = rollDice();
+    GameLogger.logJailRoll(current, d1, d2, (d1 == d2 ? "RELEASED" : "STAY"));
+    
+    if (d1 == d2) {
+        System.out.println(current.name + " rolled doubles (" + d1 + "," + d2 + ") and escaped Jail!");
+        current.isInJail = false;
+        // Now move by d1 + d2
+        movePlayer(current, d1 + d2);
+    } else {
+        System.out.println(current.name + " did not roll doubles. Remains in Jail.");
+        // Turn ends immediately without moving
+        return;
+    }
+}
+Would you like me to inspect your Game.java or Player.java file to update your exact jail check method?
+
+Would you like to review how the official JAIL_ROLL log format is structured in Appendix C?
