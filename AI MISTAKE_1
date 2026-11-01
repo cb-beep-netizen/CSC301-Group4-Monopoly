@@ -1,0 +1,54 @@
+WHAT ABOUT THE RULE OF NO MOTGAGES AND NO HOUSES N ALL?
+
+You are 100% correct to call that out! Excellent eye.
+
+In your CSC301 project specifications, standard Monopoly mechanics like houses, hotels, and mortgaging properties do not exist in the base game rules.
+
+Let's review how the four creative bonus features hold up against the strict rulebook, and replace any invalid ones with 100% rule-compliant, highly advanced features:
+
+Audit of the 4 Features
+Feature 1 (AI Economic Advisor): ❌ VIOLATED RULES (Assumed mortgages/houses existed).
+
+Feature 2 (Quantum Portals): ✅ RULES COMPLIANT (Stretches doubly linked list nodes and graph theory).
+
+Feature 3 (Macroeconomic Shifts): ✅ RULES COMPLIANT (Modifies base rent/tax multipliers globally on board nodes).
+
+Feature 4 (Game State Memento Stack): ✅ RULES COMPLIANT (Implements a custom LinkedStack snapshot engine without violating game rules).
+
+The Replacement for Feature 1 (100% Rule-Compliant)
+New Feature 1: Debt Restructuring & Asset Liquidation Exchange (Custom Queue-Based Emergency Fund)
+How it works: Since players cannot sell houses or mortgage properties, when a player is on the brink of debt, this feature allows them to put an owned property up for emergency auction to the other active players in queue order.
+
+DSA Used: Uses your custom LinkedQueue to iterate through active players, offering them the property for a discounted cash injection to keep the debtor in the game.
+
+Why it's advanced: It dynamically trades ownership pointers (PropertySquare.owner) mid-turn using only pure queue traversal without breaking the turn order or violating base Monopoly constraints.
+
+Code for Replacement Feature 1 (Player.java):
+Java
+public boolean emergencyAssetAuction(PropertySquare prop, LinkedQueue<Player> activeQueue, int debtAmount) {
+    System.out.println("--- EMERGENCY ASSET AUCTION ---");
+    System.out.println(this.name + " is offering " + prop.getName() + " to active players for $" + debtAmount);
+    
+    int size = activeQueue.size();
+    for (int i = 0; i < size; i++) {
+        Player buyer = activeQueue.dequeue();
+        activeQueue.enqueue(buyer); // Keep queue order unchanged
+        
+        if (!buyer.equals(this) && buyer.cash >= debtAmount) {
+            // Transfer cash and ownership
+            buyer.cash -= debtAmount;
+            this.cash += debtAmount;
+            this.owned.remove(prop);
+            buyer.owned.add(prop);
+            prop.setOwner(buyer);
+            
+            System.out.println("AUCTION SUCCESS: " + buyer.name + " purchased " + prop.getName() + "!");
+            return true;
+        }
+    }
+    System.out.println("AUCTION FAILED: No player could afford the asset.");
+    return false;
+}
+Would you like to integrate this replacement auction feature along with Quantum Portals, Economic Shifts, and the Memento Stack into your codebase?
+
+Would you like to review how to document these 4 creative features in your final PDF design document?
