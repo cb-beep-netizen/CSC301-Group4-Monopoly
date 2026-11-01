@@ -50,7 +50,8 @@
             Java components and toolchain check; build approach advice;
             software environment setup; bonus choice; core design (UML,
             board and card files); core game build and tests; console
-            board view; colour mode; GitHub sync
+            board view; colour mode; GitHub sync; standings with properties;
+            AI usage PDF report; data structures PDF report
  Status    : Open (continuing)
 --------------------------------------------------------------------------------
 
@@ -720,6 +721,115 @@ https://github.com/cb-beep-netizen/CSC301-Group4-Monopoly/tree/CS-Monopoly
    address for the commits, in line with Prompt 01.18.
  - .vscode/settings.json was left out of the sync because CS has not yet
    decided on the chat.disableAIFeatures change.
+
+################################################################################
+ SECTION: GAME ENHANCEMENTS
+################################################################################
+
+[Prompt 01.22 | 2026-11-01 19:24 GST | CS]
+I need some enhancements to the program.   at the end of the game,  Pls show
+the ranking of the players, how much is their networth and list the
+properties owned by them.  this should come when the game is quit.  also in
+the console centre also currently where the ranking, networth is show,  pls
+add the properties owned by them also.
+
+[AI actions 01.22]
+ - Centre panel (during play): under each player a line "owns: ..." lists
+   their properties in board order, shortened with "+N more" to fit; shown
+   when there is room for both the lists and at least 3 event lines.
+ - Quit (Q) and game over: the centre switches to the ranking (rank, token,
+   name, net worth, cash, "owns: ..."), the header says GAME STOPPED or GAME
+   OVER, and a full standings report is printed under the board: rank, net
+   worth = cash + property value, and every property owned (wrapped, not
+   cut). --text mode prints the same report after the RANK lines.
+ - Design decision: quitting with Q writes no END line to the game log,
+   because Appendix C allows only END|LAST_PLAYER and END|MAX_TURNS.
+ - Self-correction during this prompt: after Q the header still said
+   "Next to play: <name>"; changed to "GAME STOPPED".
+ - Files: code\BoardView.java, code\Main.java, tests\GameTests.java (3 new
+   checks), README (END OF GAME / QUIT), design notes D21, screenshots
+   design\Board_View_Screenshot.png and design\Quit_Standings_Screenshot.png.
+ - Tests: 53 passed, 0 failed. Constraint check: PASS.
+
+[AI response 01.22 - summary]
+ - Showed both screens; the new version is not on GitHub yet (pushed commits
+   aabd08f and b2578b0 predate it); it needs another sync.
+
+################################################################################
+ SECTION: REPORTING
+################################################################################
+
+[Prompt 01.23 | 2026-11-01 19:32 GST | CS]
+make a pdf report based on the AI-Usage-log log file.   the report must be
+titled appropriately using the context for the project name,  sub heading as
+AI usage log for user CS (Caron Sylvia).   The report should initially show a
+summary section with a small write up on AI usage and a pictorial timeline of
+AI prompts with functionalities build.  Then the detailed report section
+should show the tabular view of the AI log usage.  as required in the context
+word doc uploaded initially.   keep this pdf report also in the monopoly
+folder
+
+[AI actions 01.23]
+ - Parsed AI-Usage-log.txt (Prompts 01.01-01.23, Part A index, Part C
+   candidate cases) and generated
+   C:\Claude\Monopoly\CSC301_Group4_Monopoly_AI_Usage_Report_CS.pdf:
+   summary write-up, key figures, pictorial timeline of prompts and the
+   functionality built at each, then the detailed tables required by brief
+   Section 7.1 (log index, prompt-by-prompt log, AI reflection cases).
+ - Noted in the report that Prompts 01.19-01.21 came from a separate Claude
+   session (desktop app); under brief 7.1 that session may need its own row
+   in the log index and its own export.
+
+[AI response 01.23 - summary]
+ - Delivered the PDF; listed what the group still has to add (export links,
+   final reflection text, teammates' conversations).
+
+[Prompt 01.24 | 2026-11-01 19:45 GST | CS]  (interrupted by CS before any AI action)
+Now make a detailed PDF report on the JAVA data structures used in this
+monopoly game and explain for which game function it was used.   create the
+report in the same format as AI log report with similar headings, but sub
+heading should be "Data structures used in the Monopoly Game and its
+explanation".  in the report content clearly explain Game functionality that
+was built and which Data structure algorithm was used e.g linkedlist or
+double linkedlist etc...refer to the context doc uploaded initially and
+prepare this report based on the code and game functionality and data
+structures used
+
+[AI actions 01.24]
+ - None: CS interrupted the request and re-sent it with a screenshot
+   (Prompt 01.25). Logged as an abandoned attempt (brief Section 7.1).
+
+[Prompt 01.25 | 2026-11-01 19:47 GST | CS]
+(Attachment: screenshot of the game in the Windows Command Prompt, turn 18,
+GAME STOPPED standings for players Caron, Helen and Jay.)
+Now make a detailed PDF report on the JAVA data structures used in this
+monopoly game and explain for which game function it was used.   create the
+report in the same format as AI log report with similar headings, but sub
+heading should be "Data structures used in the Monopoly Game and its
+explanation".  in the report content clearly explain Game functionality that
+was built and which Data structure algorithm was used e.g linkedlist or
+double linkedlist etc...refer to the context doc uploaded initially and
+prepare this report based on the code and game functionality and data
+structures used.  include the attached screenshot from the actual game after
+the summary portion of the report. so that it gives a feel of how the game
+looks like.  post this image, you include the explanation part.
+
+[AI actions 01.25]
+ - Confirmed the code on CS's PC is identical to the AI's working copy
+   (MD5 of all 25 .java files and both data files).
+ - Wrote C:\Claude\Monopoly\CSC301_Group4_Monopoly_Data_Structures_Report.pdf
+   in the same format as the AI usage report: summary (overview, key
+   figures, structure-to-function map), CS's screenshot of the running game
+   with what each part of the screen comes from, then the detailed
+   explanation: circular doubly linked list, linked queue, ArrayList,
+   recursion (8 required methods: base case, recursive case, termination),
+   supporting Java constructs, constraint compliance (brief 4.2), data flow
+   through one turn, and a game-function-to-data-structure matrix.
+
+[AI response 01.25 - summary]
+ - Delivered the PDF; noted that it also covers most of the design-document
+   content required by brief Section 9 (where/why each structure is used,
+   alternatives rejected, recursion termination).
 
 
 ================================================================================

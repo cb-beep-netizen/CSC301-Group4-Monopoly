@@ -21,7 +21,7 @@ import java.util.Scanner;
  *   --color / --no-color   force colours on or off (default: detected)
  *   --ascii          draw the board with + - | instead of box-drawing characters
  *   --log-lines      board view shows raw log lines instead of plain sentences
- * AI log: Conversation 01, Prompt 01.13, updated in Prompt 01.14 (Claude). Reviewed and understood by: ______
+ * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14 and 01.19 (Claude). Reviewed and understood by: ______
  */
 public class Main {
 
@@ -133,6 +133,7 @@ public class Main {
             game.playOneTurn();
         }
         game.finish();
+        System.out.print(new BoardView(false, true, false).standings(game, "FINAL STANDINGS"));
     }
 
     /**
@@ -148,16 +149,19 @@ public class Main {
                 view.render(game, System.lineSeparator() + "  > " + next.getName() + jail
                         + ": press Enter to roll the dice (Q to quit) ");
                 if (!in.hasNextLine() || in.nextLine().trim().equalsIgnoreCase("Q")) {
-                    view.render(game, System.lineSeparator() + "  Game stopped. Log so far: " + logPath
-                            + System.lineSeparator());
+                    view.setStandingsMode(true);
+                    view.render(game, view.standings(game, "GAME STOPPED after turn " + game.getTurnCount()
+                            + " - standings by net worth") + System.lineSeparator()
+                            + "  The game log so far is in " + logPath + System.lineSeparator());
                     return;
                 }
             }
             game.playOneTurn();
         }
         game.finish();
-        view.render(game, System.lineSeparator() + "  Game over. The full game log is in " + logPath
-                + System.lineSeparator());
+        String reason = "LAST_PLAYER".equals(game.getEndReason()) ? "one player left" : "turn limit reached";
+        view.render(game, view.standings(game, "GAME OVER (" + reason + ") - final ranking")
+                + System.lineSeparator() + "  The full game log is in " + logPath + System.lineSeparator());
     }
 
     private static String value(String[] args, int i, String option) {

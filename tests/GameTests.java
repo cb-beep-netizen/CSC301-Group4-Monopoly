@@ -6,7 +6,7 @@ import java.util.Random;
  * Uses scripted dice and unshuffled decks so every expected log line is known.
  * Uses only ArrayList and Random from java.util, like the game code.
  * Run: java -cp bin;tests-bin GameTests <test-board> <board> <cards>
- * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14 and 01.15 (Claude).
+ * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14, 01.15 and 01.19 (Claude).
  */
 public class GameTests {
     static int pass = 0, fail = 0;
@@ -343,6 +343,21 @@ public class GameTests {
         done.finish();
         String end = plain.build(done);
         check("Board view final screen shows GAME OVER and the ranking", end.contains("GAME OVER (LAST_PLAYER)") && end.contains("1.  B ") && end.contains("bankrupt"), end);
+        // properties owned: centre panel, quit standings, final report
+        Game g3 = game(BOARD, cards(), ALWAYS, new Integer[]{3, 4, 1, 2, 2, 3}, "Sara", "Omar", "Ali");
+        g3.playOneTurn(); g3.playOneTurn(); g3.playOneTurn();
+        String live = plain.build(g3);
+        check("Centre panel lists each player's properties", live.contains("owns: Yas Island") && live.contains("owns: Al Bateen")
+                && live.contains("owns: Metro Red Line"), live);
+        BoardView stop = new BoardView(false, true, false);
+        stop.setStandingsMode(true);
+        String stopped = stop.build(g3);
+        check("Quit screen: centre shows STANDINGS with net worth and properties", stopped.contains("GAME STOPPED")
+                && stopped.contains("STANDINGS (game stopped)") && stopped.contains("owns: Yas Island"), stopped);
+        String report = stop.standings(g3, "GAME STOPPED after turn 3");
+        check("Standings report: rank, net worth = cash + property, property list",
+                report.contains("1.") && report.contains("net worth 1500  =  cash 1300 + property 200")
+                && report.contains("Properties (1): Metro Red Line"), report);
         check("Narration of a log line", plain.narrate("RENT|Sara|Omar|12|1318|1252", g).equals("Sara paid 12 rent to Omar (cash 1318)"), "");
     }
 

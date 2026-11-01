@@ -4,7 +4,7 @@ Feeds the design document (brief Section 9). Twists deferred; bonus B4 + languag
 1. FOLDERS
    code\            Java source, default package (25 .java files)
    code\data\       board.txt, cards.txt  (own designs, Appendix B formats)
-   tests\           GameTests.java (50 checks), test-board.txt, check_constraints.py
+   tests\           GameTests.java (53 checks), test-board.txt, check_constraints.py
    design\          UML_Class_Diagram.(mmd|png|svg) v2 as built, this file
    bin\, tests-bin\ compiled classes (not submitted)
    build.bat / run.bat / run-tests.bat at the project root
@@ -67,6 +67,12 @@ Feeds the design document (brief Section 9). Twists deferred; bonus B4 + languag
     console, colour processing is switched on at start-up by running a short
     cmd.exe command on the same console (as Python's os.system("") does).
     --no-color turns colours off.
+ D21 Standings (Prompt 01.19): the centre lists each player's properties
+    (board order, shortened with "+N more" to fit); on game over or Q the
+    centre shows the ranking with net worth and cash, and a full report under
+    the board shows rank, net worth = cash + property value, and every owned
+    property. Q writes no END line: Appendix C allows only LAST_PLAYER and
+    MAX_TURNS. --text mode prints the same report after the RANK lines.
  D18 Helpers called from the required recursive methods are recursive or O(1)
     too: bankruptcy releases squares and returns JAIL_FREE cards recursively,
     PAY_EACH / COLLECT_EACH recurse over a queue-order snapshot, the console

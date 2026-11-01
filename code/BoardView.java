@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * VS Code, and the classic Windows 10/11 console once enableWindowsColour()
  * has run); otherwise the same screen is drawn without colour. Each player has
  * a colour; squares they own are tinted with it and show their name.
- * AI log: Conversation 01, Prompt 01.14, updated in Prompt 01.15 (Claude). Reviewed and understood by: ______
+ * AI log: Conversation 01, Prompt 01.14, updated in Prompts 01.15 and 01.19 (Claude). Reviewed and understood by: ______
  */
 public class BoardView {
     private static final int CW = 13;   // inner width of a square cell
@@ -31,11 +31,17 @@ public class BoardView {
     private boolean[][] hSeg;
     private boolean[][] vSeg;
     private final ArrayList<String> groupNames = new ArrayList<>();
+    private boolean standingsMode;   // true after the players quit: centre shows the standings
 
     public BoardView(boolean color, boolean ascii, boolean rawEvents) {
         this.color = color;
         this.ascii = ascii;
         this.rawEvents = rawEvents;
+    }
+
+    /** When true the centre shows the ranking (used when the game is stopped with Q). */
+    public void setStandingsMode(boolean on) {
+        standingsMode = on;
     }
 
     /**
@@ -315,6 +321,8 @@ public class BoardView {
         put(y + row, x, turnInfo, color ? ESC + "1m" : null);
         if (game.isOver()) {
             put(y + row, x + turnInfo.length(), "GAME OVER (" + game.getEndReason() + ")", color ? ESC + "1;38;5;196m" : null);
+        } else if (standingsMode) {
+            put(y + row, x + turnInfo.length(), "GAME STOPPED", color ? ESC + "1;38;5;196m" : null);
         } else if (current != null) {
             put(y + row, x + turnInfo.length(), "Next to play: ", null);
             put(y + row, x + turnInfo.length() + 14, " " + current.getName() + " ",
@@ -323,20 +331,28 @@ public class BoardView {
         row++;
         put(y + row++, x, rule(w), ruleStyle);
 
-        if (game.isFinished()) {
-            put(y + row++, x, "FINAL RANKING                NET WORTH", dim);
+        if (game.isFinished() || standingsMode) {
+            put(y + row++, x, (game.isFinished() ? "FINAL RANKING" : "STANDINGS (game stopped)")
+                    + "              NET WORTH   CASH", dim);
             ArrayList<Player> ranking = game.rank();
+            boolean roomForLists = row + 2 * ranking.size() <= h;
             for (int i = 0; i < ranking.size() && row < h; i++) {
                 Player p = ranking.get(i);
                 int idx = players.indexOf(p);
                 put(y + row, x, (i + 1) + ".", color ? ESC + "1m" : null);
                 put(y + row, x + 3, " " + tokens.charAt(idx) + " ", swatch(idx));
-                put(y + row, x + 7, pad(p.getName(), 20) + String.format("%6d", p.totalNetWorth())
+                put(y + row, x + 7, pad(fit(p.getName(), 20), 20) + String.format("%7d", p.totalNetWorth())
+                        + String.format("%7d", p.isBankrupt() ? 0 : p.getCash())
                         + (p.isBankrupt() ? "   bankrupt" : ""), playerText(idx, p.isBankrupt()));
                 row++;
+                if (roomForLists && row < h) {
+                    put(y + row++, x + 7, propertyLine(game, p, w - 7), ownedText(idx, p.isBankrupt()));
+                }
             }
         } else {
             put(y + row++, x, "      NAME        CASH  POSITION          OWN    NET", dim);
+            // two lines per player (details + properties) when there is room for a few events too
+            boolean roomForLists = row + 2 * players.size() + 2 + 3 <= h;
             for (int i = 0; i < players.size() && row < h; i++) {
                 Player p = players.get(i);
                 String status = p.isBankrupt() ? "BANKRUPT" : p.isInJail() ? "JAIL " + p.getJailAttempts() + "/3" : "";
@@ -349,6 +365,9 @@ public class BoardView {
                         + pad(pos, 16) + String.format("%4d", p.getOwned().size())
                         + String.format("%7d", p.totalNetWorth()) + "  " + status, playerText(i, p.isBankrupt()));
                 row++;
+                if (roomForLists && row < h) {
+                    put(y + row++, x + 4, propertyLine(game, p, w - 4), ownedText(i, p.isBankrupt()));
+                }
             }
             ArrayList<Player> order = new ArrayList<>();
             game.getTurnQueue().copyInto(order);
@@ -402,6 +421,101 @@ public class BoardView {
             }
             put(y + row++, x, text, st);
         }
+    }
+
+    /** Squares owned by p in board order (walking the ring once from GO). Display only. */
+    public ArrayList<String> ownedInBoardOrder(Game game, Player p) {
+        ArrayList<String> names = new ArrayList<>();
+        Board board = game.getBoard();
+        Node<Square> node = board.getHead();
+        for (int i = 0; i < board.size(); i++) {
+            Square s = node.data;
+            if (s instanceof OwnableSquare && ((OwnableSquare) s).getOwner() == p) {
+                names.add(s.getName());
+            }
+            node = node.next;
+        }
+        return names;
+    }
+
+    /** "owns: A, B, C +2 more" shortened to the given width. */
+    private String propertyLine(Game game, Player p, int width) {
+        if (p.isBankrupt()) {
+            return "owns: nothing (squares returned to the bank)";
+        }
+        ArrayList<String> names = ownedInBoardOrder(game, p);
+        if (names.isEmpty()) {
+            return "owns: nothing yet";
+        }
+        StringBuilder sb = new StringBuilder("owns: ");
+        for (int i = 0; i < names.size(); i++) {
+            String piece = (i == 0 ? "" : ", ") + names.get(i);
+            String more = " +" + (names.size() - i) + " more";
+            boolean last = i == names.size() - 1;
+            if (sb.length() + piece.length() + (last ? 0 : more.length()) > width) {
+                sb.append(more);
+                break;
+            }
+            sb.append(piece);
+        }
+        return fit(sb.toString(), width);
+    }
+
+    private String ownedText(int idx, boolean bankrupt) {
+        if (!color) {
+            return null;
+        }
+        return bankrupt || idx < 0 ? ESC + "38;5;240m" : ESC + "38;5;" + playerColor(idx) + "m";
+    }
+
+    /**
+     * Full standings report printed under the board when the game ends or is
+     * stopped: rank, net worth (cash + purchase prices) and every property
+     * owned, in board order, wrapped to the board width. Display only.
+     */
+    public String standings(Game game, String heading) {
+        ArrayList<Player> players = game.getPlayers();
+        String tokens = tokens(players);
+        String nl = System.lineSeparator();
+        int width = 98;
+        StringBuilder out = new StringBuilder();
+        out.append(nl).append(styled(" " + heading + " ", color ? ESC + "1;38;5;16;48;5;220m" : null)).append(nl).append(nl);
+        ArrayList<Player> ranking = game.rank();
+        for (int i = 0; i < ranking.size(); i++) {
+            Player p = ranking.get(i);
+            int idx = players.indexOf(p);
+            int property = p.isBankrupt() ? 0 : p.netWorth(p.getOwned(), 0);
+            String head = String.format("%d. ", i + 1);
+            out.append(styled(head, color ? ESC + "1m" : null))
+               .append(styled(" " + tokens.charAt(idx) + " ", swatch(idx)))
+               .append(styled(" " + pad(p.getName(), 14), playerText(idx, p.isBankrupt())))
+               .append(styled(p.isBankrupt()
+                       ? "net worth 0 (bankrupt)"
+                       : "net worth " + p.totalNetWorth() + "  =  cash " + p.getCash() + " + property " + property,
+                       playerText(idx, p.isBankrupt())))
+               .append(nl);
+            ArrayList<String> names = p.isBankrupt() ? new ArrayList<>() : ownedInBoardOrder(game, p);
+            String label = "      Properties (" + names.size() + "): ";
+            if (names.isEmpty()) {
+                out.append(styled(label + (p.isBankrupt() ? "none - returned to the bank" : "none"), ownedText(idx, p.isBankrupt()))).append(nl);
+            } else {
+                StringBuilder line = new StringBuilder(label);
+                for (int k = 0; k < names.size(); k++) {
+                    String piece = names.get(k) + (k < names.size() - 1 ? ", " : "");
+                    if (line.length() + piece.length() > width) {
+                        out.append(styled(line.toString(), ownedText(idx, false))).append(nl);
+                        line = new StringBuilder(pad("", label.length()));
+                    }
+                    line.append(piece);
+                }
+                out.append(styled(line.toString(), ownedText(idx, false))).append(nl);
+            }
+        }
+        return out.toString();
+    }
+
+    private String styled(String text, String st) {
+        return st == null ? text : st + text + RESET;
     }
 
     private static int indexOfName(ArrayList<Player> players, String name) {

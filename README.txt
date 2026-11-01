@@ -37,7 +37,15 @@ SCREEN (default board view)
   The board is drawn as a ring of squares (colour group, price, current rent,
   owner [S], player tokens; # = in Jail). The middle shows each player's cash,
   position, squares owned and net worth, the turn queue, and what happened in
-  the last turn. Press Enter to roll; Q quits.
+  the last turn. Under each player the centre lists the properties they own.
+  Press Enter to roll; Q quits.
+
+END OF GAME / QUIT
+  When the game ends (one player left or the turn limit) or you press Q, the
+  centre shows the ranking, and a full standings report is printed under the
+  board: rank, net worth (= cash + purchase prices of owned squares) and every
+  property each player owns, in board order. Quitting with Q does not write an
+  END line to the log (END is only LAST_PLAYER or MAX_TURNS, Appendix C).
 
 COLOURS
   Each player has a colour: 1 cyan, 2 pink, 3 yellow, 4 white, 5 orange,
@@ -56,7 +64,7 @@ FILES
   code\*.java             game source (25 files, incl. BoardView)
   code\data\board.txt     our 24-square board (Appendix B.1 format)
   code\data\cards.txt     our 10 Chance + 10 Community cards (Appendix B.2)
-  tests\GameTests.java    50 tests incl. the brief 8.2 scenarios and the board view
+  tests\GameTests.java    53 tests incl. the brief 8.2 scenarios and the board view
   tests\check_constraints.py  static check: allowed imports, no banned
                           collections, required methods recursive with no loops
   run-tests.bat           builds and runs both
