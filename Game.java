@@ -1,0 +1,85 @@
+package monopoly;
+
+public class Game {
+    public Board board;
+    public LinkedQueue<Player> turnQueue;
+    public LinkedQueue<Card> chance;
+    public LinkedQueue<Card> community;
+    public int maxTurns;
+    public int currentTurnCount;
+    public boolean gameOver;
+
+    public Game(Board board, LinkedQueue<Player> turnQueue, LinkedQueue<Card> chance, LinkedQueue<Card> community, int maxTurns) {
+        this.board = board;
+        this.turnQueue = turnQueue;
+        this.chance = chance;
+        this.community = community;
+        this.maxTurns = maxTurns;
+        this.currentTurnCount = 0;
+        this.gameOver = false;
+    }
+
+    // 1. Mandatory recursive takeTurn method (zero loops)[cite: 1]
+    public void takeTurn(Player p, int doublesCount) {
+        if (doublesCount >= 3) {
+            GameLogger.logJail(p);
+            p.position = board.jailNode;
+            return;
+        }
+
+        int[] rolls = Dice.roll();
+        int d1 = rolls[0];
+        int d2 = rolls[1];
+        GameLogger.logRoll(p, d1, d2);
+        boolean isDouble = (d1 == d2);
+
+        String oldSquareName = p.position.data.getName();
+        int totalSteps = d1 + d2;
+
+        Node<Square> destination = board.step(p.position, totalSteps, p);
+        String newSquareName = destination.data.getName();
+
+        GameLogger.logMove(p, oldSquareName, newSquareName);
+        p.position = destination;
+
+        landOn(p);
+
+        if (isDouble && !gameOver) {
+            takeTurn(p, doublesCount + 1);
+        }
+    }
+
+    // 2. Mandatory recursive landOn method (zero loops)[cite: 1]
+    public void landOn(Player p) {
+        Square sq = p.position.data;
+
+        if (sq instanceof PropertySquare) {
+            PropertySquare prop = (PropertySquare) sq;
+            if (prop.owner == null) {
+                if (p.cash >= prop.price) {
+                    p.cash -= prop.price;
+                    prop.owner = p;
+                    prop.owned.add(prop);
+                    GameLogger.logBuy(p, prop.getName(), p.cash);
+                }
+            } else if (prop.owner != p) {
+                int rent = prop.baseRent;
+                if (board.ownsGroup(board.squares.getHead(), board.squares.getHead(), prop.color, prop.owner)) {
+                    rent *= 2; // Doubled if owner holds every property of that color group[cite: 1]
+                }
+                p.cash -= rent;
+                prop.owner.cash += rent;
+                GameLogger.logRent(p, prop.owner, rent, p.cash, prop.owner.cash);
+            }
+        } else if (sq instanceof TaxSquare) {
+            TaxSquare tax = (TaxSquare) sq;
+            p.cash -= tax.amount;
+            GameLogger.logTax(p, tax.amount, p.cash);
+        } else if (sq instanceof CornerSquare) {
+            if (sq.getName().equals("GO_TO_JAIL")) {
+                GameLogger.logJail(p);
+                p.position = board.jailNode;
+            }
+        }
+    }
+}

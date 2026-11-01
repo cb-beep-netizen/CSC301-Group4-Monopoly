@@ -1,0 +1,12 @@
+GO|GO
+PROPERTY|Corniche Road|BLUE|60|4
+COMMUNITY|Community Chest
+PROPERTY|Al Bateen|BLUE|60|6
+TAX|Municipality Fee|100
+TRANSIT|Metro Red Line|200
+PROPERTY|Yas Island|GREEN|100|8
+CHANCE|Chance
+JAIL|Jail
+FREE|Free Parking
+GO_TO_JAIL|Go To Jail
+EXPAND|Yas Island|PROPERTY|Al Reem Island|GREEN|120|10

@@ -1,0 +1,67 @@
+package monopoly;
+
+public class GameLogger {
+    public static void log(String message) {
+        System.out.println(message);
+    }
+
+    public static void logTurn(int n, Player p) {
+        log("TURN|" + n + "|" + p.name);
+    }
+
+    public static void logRoll(Player p, int d1, int d2) {
+        log("ROLL|" + p.name + "|" + d1 + "|" + d2);
+    }
+
+    public static void logMove(Player p, String from, String to) {
+        log("MOVE|" + p.name + "|" + from + "|" + to);
+    }
+
+    public static void logSalary(Player p, int cash) {
+        log("SALARY|" + p.name + "|" + cash);
+    }
+
+    public static void logBuy(Player p, String squareName, int cash) {
+        log("BUY|" + p.name + "|" + squareName + "|" + cash);
+    }
+
+    public static void logRent(Player payer, Player owner, int amount, int payerCash, int ownerCash) {
+        log("RENT|" + payer.name + "|" + owner.name + "|" + amount + "|" + payerCash + "|" + ownerCash);
+    }
+
+    public static void logTax(Player p, int amount, int cash) {
+        log("TAX|" + p.name + "|" + amount + "|" + cash);
+    }
+
+    public static void logCard(Player p, String cardId) {
+        log("CARD|" + p.name + "|" + cardId);
+    }
+
+    public static void logCash(Player p, String change, int cash) {
+        log("CASH|" + p.name + "|" + change + "|" + cash);
+    }
+
+    public static void logJail(Player p) {
+        log("JAIL|" + p.name);
+    }
+
+    public static void logJailRoll(Player p, int d1, int d2, String status) {
+        log("JAIL_ROLL|" + p.name + "|" + d1 + "|" + d2 + "|" + status);
+    }
+
+    public static void logJailFree(Player p) {
+        log("JAIL_FREE|" + p.name);
+    }
+
+    public static void logBankrupt(Player p, String creditor) {
+        log("BANKRUPT|" + p.name + "|" + creditor);
+    }
+
+    public static void logEnd(String reason) {
+        log("END|" + reason);
+    }
+
+    public static void logRank(int pos, Player p, int netWorth) {
+        log("RANK|" + pos + "|" + p.name + "|" + netWorth);
+    }
+}

@@ -1,0 +1,9 @@
+CHANCE|C1|Advance to GO|MOVE_TO|GO
+CHANCE|C2|Go back 3 squares|MOVE_BY|-3
+CHANCE|C3|Take the nearest metro|NEAREST|TRANSIT
+CHANCE|C4|Speeding fine|PAY|15
+COMMUNITY|K1|Research grant awarded|COLLECT|200
+COMMUNITY|K2|Host a dinner for everyone|PAY_EACH|50
+COMMUNITY|K3|Birthday gifts from each player|COLLECT_EACH|10
+COMMUNITY|K4|Go directly to Jail|GO_TO_JAIL|
+COMMUNITY|K5|Get out of Jail free|JAIL_FREE|
