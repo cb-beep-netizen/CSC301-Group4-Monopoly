@@ -1,0 +1,234 @@
+=================================================
+   CSC301 MONOPOLY GAME SIMULATION & TESTER      
+=================================================
+
+Current Working Directory: C:\Users\ridab\OneDrive\Desktop\SPRING 26\Programming 2\Lab2\Monopoly
+Checking path: C:\Users\ridab\OneDrive\Desktop\SPRING 26\Programming 2\Lab2\Monopoly\src\monopoly\board.txt -> Exists? false
+Checking path: C:\Users\ridab\OneDrive\Desktop\SPRING 26\Programming 2\Lab2\Monopoly\src\monopoly\board.txt -> Exists? false
+Checking path: C:\Users\ridab\OneDrive\Desktop\SPRING 26\Programming 2\Lab2\Monopoly\board.txt -> Exists? false
+Checking path: C:\Users\ridab\OneDrive\Desktop\Fall Year\CSC301\Monopoly\src\monopoly\board.txt -> Exists? true
+Successfully loading board from: C:\Users\ridab\OneDrive\Desktop\Fall Year\CSC301\Monopoly\src\monopoly\board.txt
+Board initialized with 11 squares.
+
+--- STARTING MONOPOLY GAME LOOP (MAX 60 TURNS) ---
+
+TURN|1|Sara
+ROLL|Sara|4|4
+MOVE|Sara|GO|Jail
+ROLL|Sara|6|2
+MOVE|Sara|Jail|Metro Red Line
+TURN|2|Omar
+ROLL|Omar|1|6
+MOVE|Omar|GO|Chance
+TURN|3|Ali
+ROLL|Ali|5|4
+MOVE|Ali|GO|Free Parking
+TURN|4|Sara
+ROLL|Sara|1|1
+MOVE|Sara|Metro Red Line|Chance
+ROLL|Sara|3|5
+MOVE|Sara|Chance|Municipality Fee
+TAX|Sara|100|1800
+TURN|5|Omar
+ROLL|Omar|3|5
+MOVE|Omar|Chance|Municipality Fee
+TAX|Omar|100|1600
+TURN|6|Ali
+ROLL|Ali|5|4
+MOVE|Ali|Free Parking|Chance
+TURN|7|Sara
+ROLL|Sara|4|6
+MOVE|Sara|Municipality Fee|Al Bateen
+BUY|Sara|Al Bateen|1940
+TURN|8|Omar
+ROLL|Omar|2|1
+MOVE|Omar|Municipality Fee|Chance
+TURN|9|Ali
+ROLL|Ali|1|6
+MOVE|Ali|Chance|Al Bateen
+RENT|Ali|Sara|6|1894|1946
+TURN|10|Sara
+ROLL|Sara|6|2
+MOVE|Sara|Al Bateen|GO
+TURN|11|Omar
+ROLL|Omar|3|4
+MOVE|Omar|Chance|Al Bateen
+RENT|Omar|Sara|6|1794|2152
+TURN|12|Ali
+ROLL|Ali|5|3
+MOVE|Ali|Al Bateen|GO
+TURN|13|Sara
+ROLL|Sara|6|6
+MOVE|Sara|GO|Corniche Road
+BUY|Sara|Corniche Road|2292
+ROLL|Sara|5|6
+MOVE|Sara|Corniche Road|Corniche Road
+TURN|14|Omar
+ROLL|Omar|5|2
+MOVE|Omar|Al Bateen|Go To Jail
+TURN|15|Ali
+ROLL|Ali|5|1
+MOVE|Ali|GO|Yas Island
+BUY|Ali|Yas Island|1994
+TURN|16|Sara
+ROLL|Sara|6|5
+MOVE|Sara|Corniche Road|Corniche Road
+TURN|17|Omar
+ROLL|Omar|3|6
+MOVE|Omar|Go To Jail|Jail
+TURN|18|Ali
+ROLL|Ali|3|2
+MOVE|Ali|Yas Island|GO
+TURN|19|Sara
+ROLL|Sara|6|4
+MOVE|Sara|Corniche Road|GO
+TURN|20|Omar
+ROLL|Omar|3|4
+MOVE|Omar|Jail|Municipality Fee
+TAX|Omar|100|2094
+TURN|21|Ali
+ROLL|Ali|6|5
+MOVE|Ali|GO|GO
+TURN|22|Sara
+ROLL|Sara|6|3
+MOVE|Sara|GO|Free Parking
+TURN|23|Omar
+ROLL|Omar|2|5
+MOVE|Omar|Municipality Fee|GO
+TURN|24|Ali
+ROLL|Ali|4|3
+MOVE|Ali|GO|Chance
+TURN|25|Sara
+ROLL|Sara|2|4
+MOVE|Sara|Free Parking|Municipality Fee
+TAX|Sara|100|2992
+TURN|26|Omar
+ROLL|Omar|3|2
+MOVE|Omar|GO|Metro Red Line
+TURN|27|Ali
+ROLL|Ali|1|2
+MOVE|Ali|Chance|Go To Jail
+TURN|28|Sara
+ROLL|Sara|4|4
+MOVE|Sara|Municipality Fee|Corniche Road
+ROLL|Sara|6|1
+MOVE|Sara|Corniche Road|Jail
+TURN|29|Omar
+ROLL|Omar|6|2
+MOVE|Omar|Metro Red Line|Community Chest
+TURN|30|Ali
+ROLL|Ali|3|5
+MOVE|Ali|Go To Jail|Chance
+TURN|31|Sara
+ROLL|Sara|4|5
+MOVE|Sara|Jail|Yas Island
+RENT|Sara|Ali|16|3376|2610
+TURN|32|Omar
+ROLL|Omar|5|6
+MOVE|Omar|Community Chest|Community Chest
+TURN|33|Ali
+ROLL|Ali|2|4
+MOVE|Ali|Chance|Community Chest
+TURN|34|Sara
+ROLL|Sara|3|1
+MOVE|Sara|Yas Island|Go To Jail
+TURN|35|Omar
+ROLL|Omar|6|5
+MOVE|Omar|Community Chest|Community Chest
+TURN|36|Ali
+ROLL|Ali|6|2
+MOVE|Ali|Community Chest|Go To Jail
+TURN|37|Sara
+ROLL|Sara|3|6
+MOVE|Sara|Go To Jail|Jail
+TURN|38|Omar
+ROLL|Omar|1|1
+MOVE|Omar|Community Chest|Municipality Fee
+TAX|Omar|100|2794
+ROLL|Omar|1|4
+MOVE|Omar|Municipality Fee|Free Parking
+TURN|39|Ali
+ROLL|Ali|3|1
+MOVE|Ali|Go To Jail|Al Bateen
+RENT|Ali|Sara|12|2998|3588
+TURN|40|Sara
+ROLL|Sara|1|3
+MOVE|Sara|Jail|Corniche Road
+TURN|41|Omar
+ROLL|Omar|1|5
+MOVE|Omar|Free Parking|Municipality Fee
+TAX|Omar|100|2894
+TURN|42|Ali
+ROLL|Ali|5|1
+MOVE|Ali|Al Bateen|Free Parking
+TURN|43|Sara
+ROLL|Sara|1|5
+MOVE|Sara|Corniche Road|Chance
+TURN|44|Omar
+ROLL|Omar|4|3
+MOVE|Omar|Municipality Fee|GO
+TURN|45|Ali
+ROLL|Ali|1|5
+MOVE|Ali|Free Parking|Municipality Fee
+TAX|Ali|100|3098
+TURN|46|Sara
+ROLL|Sara|1|4
+MOVE|Sara|Chance|Corniche Road
+TURN|47|Omar
+ROLL|Omar|2|4
+MOVE|Omar|GO|Yas Island
+RENT|Omar|Ali|16|3078|3114
+TURN|48|Ali
+ROLL|Ali|3|6
+MOVE|Ali|Municipality Fee|Community Chest
+TURN|49|Sara
+ROLL|Sara|1|6
+MOVE|Sara|Corniche Road|Jail
+TURN|50|Omar
+ROLL|Omar|4|3
+MOVE|Omar|Yas Island|Community Chest
+TURN|51|Ali
+ROLL|Ali|5|4
+MOVE|Ali|Community Chest|GO
+TURN|52|Sara
+ROLL|Sara|2|1
+MOVE|Sara|Jail|GO
+TURN|53|Omar
+ROLL|Omar|1|1
+MOVE|Omar|Community Chest|Municipality Fee
+TAX|Omar|100|3178
+ROLL|Omar|2|2
+MOVE|Omar|Municipality Fee|Jail
+ROLL|Omar|1|4
+MOVE|Omar|Jail|Community Chest
+TURN|54|Ali
+ROLL|Ali|4|1
+MOVE|Ali|GO|Metro Red Line
+TURN|55|Sara
+ROLL|Sara|5|6
+MOVE|Sara|GO|GO
+TURN|56|Omar
+ROLL|Omar|1|5
+MOVE|Omar|Community Chest|Jail
+TURN|57|Ali
+ROLL|Ali|4|4
+MOVE|Ali|Metro Red Line|Community Chest
+ROLL|Ali|2|3
+MOVE|Ali|Community Chest|Chance
+TURN|58|Sara
+ROLL|Sara|4|5
+MOVE|Sara|GO|Free Parking
+TURN|59|Omar
+ROLL|Omar|1|4
+MOVE|Omar|Jail|Community Chest
+TURN|60|Ali
+ROLL|Ali|3|1
+MOVE|Ali|Chance|GO
+
+=================================================
+              FINAL GAME RANKINGS                
+=================================================
+END|MAX_TURNS
+RANK|1|Sara|4508
+RANK|2|Ali|4014
+RANK|3|Omar|3578
