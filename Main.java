@@ -4,100 +4,112 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
         System.out.println("=================================================");
-        System.out.println("   CSC301 MONOPOLY GAME SIMULATION & TESTER      ");
+        System.out.println("   CSC301 INTERACTIVE MONOPOLY BOARD GAME        ");
         System.out.println("=================================================\n");
 
-        // 1. Load Board from text file into CircularDoublyLinkedList
-        Board board = BoardLoader.loadBoard("board.txt");
+        // 1. Load board from package source folder
+        Board board = BoardLoader.loadBoard("src/monopoly/board.txt");
         if (board.squares.size() == 0) {
             System.err.println("Error: Board file could not be loaded or is empty!");
+            scanner.close();
             return;
         }
-        System.out.println("Board initialized with " + board.squares.size() + " squares.");
+        System.out.println("Board loaded successfully with " + board.squares.size() + " squares.\n");
 
-        // 2. Setup Chance and Community Card Decks
-        LinkedQueue<Card> chanceDeck = new LinkedQueue<>();
-        LinkedQueue<Card> communityDeck = new LinkedQueue<>();
-        
-        // Sample cards (In full implementation, these are loaded from card file)
-        chanceDeck.enqueue(new Card("C1", "Advance to GO", "MOVE_TO", "GO"));
-        chanceDeck.enqueue(new Card("C2", "Reverse play order", "REVERSE", "none"));
-        chanceDeck.enqueue(new Card("C3", "Go back 3 squares", "MOVE_BY", "-3"));
-
-        communityDeck.enqueue(new Card("K1", "Research grant awarded", "COLLECT", "200"));
-        communityDeck.enqueue(new Card("K2", "Speeding fine", "PAY", "50"));
-
-        // 3. Initialize Players & Turn Queue
+        // 2. Dynamic Player Setup chosen by user
         LinkedQueue<Player> turnQueue = new LinkedQueue<>();
         ArrayList<Player> allPlayers = new ArrayList<>();
 
-        // Starting position is the GO square node
-        Node<Square> startNode = board.goNode != null ? board.goNode : board.squares.getHead();
-
-        Player p1 = new Player("Sara", startNode);
-        Player p2 = new Player("Omar", startNode);
-        Player p3 = new Player("Ali", startNode);
-
-        turnQueue.enqueue(p1);
-        turnQueue.enqueue(p2);
-        turnQueue.enqueue(p3);
-
-        allPlayers.add(p1);
-        allPlayers.add(p2);
-        allPlayers.add(p3);
-
-        // 4. Instantiate Game Manager
-        Game game = new Game(board, turnQueue, chanceDeck, communityDeck, 60);
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enable Interactive Player Choices for Buying Property? (y/n): ");
-        String choice = scanner.nextLine().trim();
-        boolean interactive = choice.equalsIgnoreCase("y");
-
-        System.out.println("\n--- STARTING MONOPOLY GAME LOOP (MAX 60 TURNS) ---\n");
-
-        // 5. Main Game Loop
-        while (game.currentTurnCount < game.maxTurns && turnQueue.size() > 1 && !game.gameOver) {
-            game.currentTurnCount++;
-            
-            // Dequeue next active player
-            Player currentPlayer = turnQueue.dequeue();
-            GameLogger.logTurn(game.currentTurnCount, currentPlayer);
-
-            // Handle Jail logic or normal turn
-            if (currentPlayer.jailAttempts > 0) {
-                handleJailTurn(game, currentPlayer);
-            } else {
-                // Execute recursive turn (handles doubles recursively)
-                executePlayerTurn(game, currentPlayer, 0, interactive, scanner);
-            }
-
-            // Reset turn-specific counters
-            currentPlayer.mirageCount = 0;
-            currentPlayer.lastMoveWasCard = false;
-
-            // Re-enqueue player if still active (not bankrupt)
-            if (currentPlayer.cash >= 0) {
-                turnQueue.enqueue(currentPlayer);
-            } else {
-                GameLogger.logBankrupt(currentPlayer, "BANK");
-            }
+        System.out.print("Enter number of players (2 to 4): ");
+        int numPlayers = 3;
+        try {
+            numPlayers = Integer.parseInt(scanner.nextLine().trim());
+            if (numPlayers < 2 || numPlayers > 4) numPlayers = 3;
+        } catch (Exception e) {
+            numPlayers = 3;
         }
 
-        // 6. Game Over & Final Ranking Computation
+        Node<Square> startNode = board.goNode != null ? board.goNode : board.squares.getHead();
+
+        for (int i = 1; i <= numPlayers; i++) {
+            System.out.print("Enter name for Player " + i + ": ");
+            String playerName = scanner.nextLine().trim();
+            if (playerName.isEmpty()) {
+                playerName = "Player" + i;
+            }
+            Player p = new Player(playerName, startNode);
+            turnQueue.enqueue(p);
+            allPlayers.add(p);
+        }
+
+        // 3. Initialize card decks & Game instance
+        LinkedQueue<Card> chanceDeck = new LinkedQueue<>();
+        LinkedQueue<Card> communityDeck = new LinkedQueue<>();
+        Game game = new Game(board, turnQueue, chanceDeck, communityDeck, 60);
+
+        System.out.println("\n=================================================");
+        System.out.println(" GAME STARTING! Press [ENTER] after each turn.   ");
+        System.out.println("=================================================\n");
+
+        // 4. Interactive Main Game Loop
+        while (game.currentTurnCount < game.maxTurns && turnQueue.size() > 1 && !game.gameOver) {
+            game.currentTurnCount++;
+            Player current = turnQueue.dequeue();
+
+            // Display visual ASCII game board showing player positions
+            printBoardMap(board, allPlayers, current);
+
+            System.out.println("-------------------------------------------------");
+            System.out.println("Turn " + game.currentTurnCount + " | Current Player: " + current.name + " (Cash: $" + current.cash + ")");
+            System.out.print("Press [ENTER] to roll & take turn (or type 'status' for net worth, 'quit' to exit): ");
+            
+            String input = scanner.nextLine().trim();
+            if (input.equalsIgnoreCase("quit")) {
+                System.out.println("\nExiting game early.");
+                break;
+            } else if (input.equalsIgnoreCase("status")) {
+                System.out.println("\n--- LIVE PLAYER STATUS ---");
+                for (Player p : allPlayers) {
+                    int nw = p.cash + p.netWorth(p.owned, 0);
+                    System.out.println(p.name + " -> Cash: $" + p.cash + " | Net Worth: $" + nw);
+                }
+                System.out.println("--------------------------\n");
+                turnQueue.enqueue(current);
+                game.currentTurnCount--;
+                continue;
+            }
+
+            GameLogger.logTurn(game.currentTurnCount, current);
+
+            // Execute recursive turn
+            game.takeTurn(current, 0);
+
+            // Reset turn-specific twist counters
+            current.mirageCount = 0;
+            current.lastMoveWasCard = false;
+
+            if (current.cash >= 0) {
+                turnQueue.enqueue(current);
+            } else {
+                GameLogger.logBankrupt(current, "BANK");
+            }
+            
+            System.out.println("\n");
+        }
+
+        // 5. Game Over & Final Standings
         System.out.println("\n=================================================");
         System.out.println("              FINAL GAME RANKINGS                ");
         System.out.println("=================================================");
-        
-        String endReason = (turnQueue.size() == 1) ? "LAST_PLAYER" : "MAX_TURNS";
-        GameLogger.logEnd(endReason);
 
-        // Sort active and bankrupt players by net worth recursively/iteratively
+        String reason = turnQueue.size() == 1 ? "LAST_PLAYER" : "MAX_TURNS";
+        GameLogger.logEnd(reason);
+
         allPlayers.sort((a, b) -> Integer.compare(b.netWorth(b.owned, 0) + b.cash, a.netWorth(a.owned, 0) + a.cash));
-
         for (int i = 0; i < allPlayers.size(); i++) {
             Player p = allPlayers.get(i);
             int nw = p.cash >= 0 ? (p.cash + p.netWorth(p.owned, 0)) : 0;
@@ -107,101 +119,39 @@ public class Main {
         scanner.close();
     }
 
-    private static void executePlayerTurn(Game game, Player p, int doublesCount, boolean interactive, Scanner scanner) {
-        if (doublesCount >= 3) {
-            GameLogger.logJail(p);
-            p.position = game.board.jailNode;
-            p.jailAttempts = 1;
-            return;
-        }
+    // Helper method to render a visual map of the board and player positions
+    private static void printBoardMap(Board board, ArrayList<Player> allPlayers, Player activePlayer) {
+        System.out.println("\n=================== GAME BOARD MAP ===================");
+        Node<Square> curr = board.squares.getHead();
+        if (curr == null) return;
 
-        int[] rolls = Dice.roll();
-        int d1 = rolls[0];
-        int d2 = rolls[1];
-        p.lastDiceTotal = d1 + d2;
-        GameLogger.logRoll(p, d1, d2);
+        int index = 0;
+        do {
+            Square sq = curr.data;
+            String marker = "";
 
-        boolean isDouble = (d1 == d2);
-        String oldSquare = p.position.data.getName();
+            // Check which players are currently standing on this square
+            for (Player p : allPlayers) {
+                if (p.position != null && p.position.data != null && p.position.data.equals(sq)) {
+                    marker += "[" + p.name.substring(0, Math.min(2, p.name.length())) + "]";
+                }
+            }
 
-        // Step recursively
-        Node<Square> destination = game.board.step(p.position, p.lastDiceTotal, p);
-        p.position = destination;
-        GameLogger.logMove(p, oldSquare, destination.data.getName());
+            if (!marker.isEmpty()) {
+                marker = " <-- " + marker;
+            }
 
-        // Resolve landing
-        resolveSquareLanding(game, p, interactive, scanner);
+            String squareType = sq.getClass().getSimpleName();
+            String activeIndicator = (pInSquare(activePlayer, sq)) ? " *" : "";
+            System.out.printf("[%2d] %-18s (%s)%s%s\n", index, sq.getName(), squareType, activeIndicator, marker);
 
-        if (isDouble && p.jailAttempts == 0 && p.cash >= 0) {
-            executePlayerTurn(game, p, doublesCount + 1, interactive, scanner);
-        }
+            curr = curr.next;
+            index++;
+        } while (curr != board.squares.getHead());
+        System.out.println("======================================================\n");
     }
 
-    private static void resolveSquareLanding(Game game, Player p, boolean interactive, Scanner scanner) {
-        Square sq = p.position.data;
-
-        if (sq instanceof PropertySquare) {
-            PropertySquare prop = (PropertySquare) sq;
-            if (prop.owner == null) {
-                boolean wantsToBuy = true;
-                if (interactive && p.cash >= prop.price) {
-                    System.out.print("Player " + p.name + ", buy " + prop.getName() + " for " + prop.price + " AED? (y/n): ");
-                    wantsToBuy = scanner.nextLine().trim().equalsIgnoreCase("y");
-                }
-                if (wantsToBuy && p.cash >= prop.price) {
-                    p.cash -= prop.price;
-                    prop.owner = p;
-                    p.owned.add(prop);
-                    GameLogger.logBuy(p, prop.getName(), p.cash);
-                }
-            } else if (prop.owner != p) {
-                int rent = prop.baseRent;
-                if (game.board.ownsGroup(game.board.squares.getHead(), game.board.squares.getHead(), prop.color, prop.owner)) {
-                    rent *= 2;
-                }
-                p.cash -= rent;
-                prop.owner.cash += rent;
-                GameLogger.logRent(p, prop.owner, rent, p.cash, prop.owner.cash);
-            }
-        } else if (sq instanceof TaxSquare) {
-            TaxSquare tax = (TaxSquare) sq;
-            p.cash -= tax.amount;
-            GameLogger.logTax(p, tax.amount, p.cash);
-        } else {
-            // Polymorphic dispatch for Card, Mirage, Portal, Corner squares
-            sq.land(game, p);
-        }
-    }
-
-    private static void handleJailTurn(Game game, Player p) {
-        if (p.jailFreeCards > 0) {
-            p.jailFreeCards--;
-            p.jailAttempts = 0;
-            GameLogger.logJailFree(p);
-            return;
-        }
-
-        int[] rolls = Dice.roll();
-        int d1 = rolls[0];
-        int d2 = rolls[1];
-
-        if (d1 == d2) {
-            GameLogger.logJailRoll(p, d1, d2, "RELEASED");
-            p.jailAttempts = 0;
-            p.position = game.board.step(p.position, d1 + d2, p);
-            GameLogger.logMove(p, "Jail", p.position.data.getName());
-        } else {
-            p.jailAttempts++;
-            if (p.jailAttempts > 3) {
-                p.cash -= 50;
-                GameLogger.logJailRoll(p, d1, d2, "FINE");
-                GameLogger.logCash(p, "-50", p.cash);
-                p.jailAttempts = 0;
-                p.position = game.board.step(p.position, d1 + d2, p);
-                GameLogger.logMove(p, "Jail", p.position.data.getName());
-            } else {
-                GameLogger.logJailRoll(p, d1, d2, "STAY");
-            }
-        }
+    private static boolean pInSquare(Player p, Square sq) {
+        return p.position != null && p.position.data != null && p.position.data.equals(sq);
     }
 }
