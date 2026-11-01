@@ -1,0 +1,97 @@
+CSC301 MONOPOLY ("CAPITAL CIRCUIT") - CORE DESIGN NOTES v2          2026-11-01
+Feeds the design document (brief Section 9). Twists deferred; bonus B4 + language.
+
+1. FOLDERS
+   code\            Java source, default package (25 .java files)
+   code\data\       board.txt, cards.txt  (own designs, Appendix B formats)
+   tests\           GameTests.java (50 checks), test-board.txt, check_constraints.py
+   design\          UML_Class_Diagram.(mmd|png|svg) v2 as built, this file
+   bin\, tests-bin\ compiled classes (not submitted)
+   build.bat / run.bat / run-tests.bat at the project root
+   Run: run.bat [--seed N] [--players A,B,C] [--auto] [--max-turns N] [--dice 3,4,..] [--log F] [--pause]
+   Planned bonus flags: --debug (B4), --lang en|fr|ar
+
+2. CLASSES (fixed names/signatures from brief Section 5 kept exactly)
+   Squares     Square (abstract) > OwnableSquare (abstract, added) > PropertySquare, TransitSquare
+               Square > TaxSquare, CardSquare, CornerSquare; enums DeckType, CornerType
+   Structures  Node<T>, CircularDoublyLinkedList<T>, LinkedQueue<T> (+ private QNode<T>)
+   Cards       Card (id, text, effect, argument, deck), enum CardEffect
+   Engine      Player, Board, Dice, GameLogger, Game, FileLoader (added), Main,
+               BuyDecider interface (added) + ConsoleBuyDecider, AutoBuyDecider
+   UI          BoardView (added, Prompt 01.14): console board like the prototype
+   Bonus       DebugView (B4, read-only), Translator (language toggle, UI text only)
+
+3. KEY DECISIONS
+ D1 OwnableSquare holds price + owner once for PropertySquare and TransitSquare.
+    Player.owned stays ArrayList<Square> (spec); it only ever holds OwnableSquare.
+ D2 Card carries its deck, so a used JAIL_FREE card returns to its own deck.
+ D3 Player.jailFreeCards is ArrayList<Card>, not a counter (the card itself goes back).
+ D4 Salary: Board.step() adds 200 when moving forward onto/past GO and sets a
+    flag; Game then prints MOVE first and SALARY second (Appendix C.1 order).
+ D5 Ranking: Player implements java.lang.Comparable and Collections.sort() is used
+    on an ArrayList. java.util.Comparator is avoided - it is in java.util and not
+    on the allowed list (ArrayList, Scanner, Random, Collections).
+ D6 Bankrupt player removal: LinkedQueue.remove(T) rotates the queue once
+    (dequeue/enqueue, recursive) and drops the target - others keep their order.
+ D7 PAY_EACH / COLLECT_EACH visit other players in current turn-queue order by one
+    full rotation of the queue (current player is not in the queue during a turn).
+ D8 Determinism: one seeded Random shared by Dice and Collections.shuffle; decks
+    shuffled once at start, CHANCE first then COMMUNITY. Same seed = same game.
+ D9 landOn() termination: the card file never moves a player onto a CHANCE or
+    COMMUNITY square (checked by script), so recursion depth <= 2.
+ D10 GameLogger writes only Appendix C lines (to console and game-log.txt).
+    Prompts, board display, DebugView and translations never enter the log.
+ D11 Extension points for twists: new square = new Square subclass with land();
+    new card = new CardEffect value + one case in Game's card handler.
+ D12 The 8 mandatory recursive methods contain no for/while/do; any helper they
+    call is recursive or O(1). Loops are allowed elsewhere (game loop, file read).
+ D13 step(): base case steps == 0 returns current; steps > 0 follows next;
+    steps < 0 follows prev and never pays salary.
+ D14 A drawn card goes back to the bottom of its deck as soon as its own effect
+    is done - for a move card, before the destination square is resolved.
+ D15 Buying goes through a BuyDecider: ConsoleBuyDecider asks Y/N (default),
+    AutoBuyDecider (--auto) buys when affordable, for scripted test games.
+ D16 Dice can take a scripted list of values (--dice) before falling back to the
+    seeded Random - reproduces the brief 8.2 scenarios exactly in tests and demo.
+ D17 MOVE_TO always moves forward; if the target is the current square the
+    player goes a full lap (and passes GO).
+ D19 Two console modes. Default board view (BoardView): ring of squares,
+    player table, turn queue, last turn's events in plain words; Enter to
+    roll. --text prints the Appendix C lines instead. Both modes write the same
+    log file. BoardView only reads state; it walks the ring with next for
+    display and is never called from the required recursive methods (the buy
+    prompt inside landOn prints one line, no board redraw).
+ D20 Colour (Prompt 01.15): each player has a colour (cyan, pink, yellow,
+    white, orange, sky blue) and a dark tint of it; owned squares are tinted
+    with the owner's colour and show the owner's name. In the classic Windows
+    console, colour processing is switched on at start-up by running a short
+    cmd.exe command on the same console (as Python's os.system("") does).
+    --no-color turns colours off.
+ D18 Helpers called from the required recursive methods are recursive or O(1)
+    too: bankruptcy releases squares and returns JAIL_FREE cards recursively,
+    PAY_EACH / COLLECT_EACH recurse over a queue-order snapshot, the console
+    Y/N prompt re-asks recursively.
+
+4. BOARD (24 squares)   GO(0) ... JAIL(6) ... FREE(12) ... GO_TO_JAIL(18)
+   BLUE 2 (60/60), GREEN 3 (100-140), ORANGE 3 (160-200), RED 3 (220-280),
+   TRANSIT 3 (200 each, rent 25/50/100), TAX 2 (100, 75), CHANCE 2, COMMUNITY 2.
+
+5. CARDS   CHANCE 10, COMMUNITY 10; all 9 standard effects covered.
+   Deliberate test cases built into the files:
+   - C3 NEAREST from "Chance Desk" wraps past GO to Metro Red Line (salary paid).
+   - C2 "Go back 3" from "Chance" lands on Jail (just visiting, no salary).
+   - K9 MOVE_TO Corniche Road from "Community Chest" goes forward round the whole
+     board (passes GO, salary paid) - MOVE_TO is always forward.
+   - K2 PAY_EACH 50 can bankrupt the payer part-way (brief 3.7).
+
+6. ECONOMY FINDING (simulation, 400 games per setting, 60 turns, 3-4 players)
+   Bankruptcies per game: 0.00 with the board rents, and still 0.00 with rents
+   x2, x3 and x4. With no houses and a 200 salary per lap, 1500 AED cannot be
+   drained in ~20 turns per player. Rents are kept in line with the brief's
+   sample values; bankruptcy and LAST_PLAYER are demonstrated with scripted
+   dice (tests and --dice), not by waiting for a random game.
+
+7. OPEN QUESTIONS FOR THE INSTRUCTOR
+   Q1 Which three twists are assigned to our group?
+   Q2 Is the --auto buy policy acceptable for scripted test games, with the
+      interactive Y/N prompt as the default? (implemented, pending answer)

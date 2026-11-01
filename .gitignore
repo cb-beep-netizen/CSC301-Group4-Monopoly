@@ -22,3 +22,13 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# --- CSC301 CS local files (added by sync-to-github.bat) ---
+bin/
+tests-bin/
+game-log.txt
+sync-log.txt
+setup/setup-verification.txt
+setup/java-path-check.txt
+*.lnk
+CSC301_Monopoly_Assignment.docx

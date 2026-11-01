@@ -1,0 +1,239 @@
+---
+title: CSC301 Monopoly (Capital Circuit) - Class Diagram v3 (as built, core game + board view)
+---
+classDiagram
+direction TB
+namespace Squares {
+  class Square {
+    <<abstract>>
+    -String name
+    +getName() String
+    +getType()* String
+    +land(Game game, Player player)* void
+  }
+  class OwnableSquare {
+    <<abstract>>
+    -int price
+    -Player owner
+    +getPrice() int
+    +getOwner() Player
+    +setOwner(Player p) void
+    +rent(Board board)* int
+    +land(Game game, Player player) void
+  }
+  class PropertySquare {
+    -String color
+    -int rent
+    +getColor() String
+    +getBaseRent() int
+    +rent(Board board) int
+  }
+  class TransitSquare {
+    +transitRent(int owned) int
+    +rent(Board board) int
+  }
+  class TaxSquare {
+    -int amount
+    +land(Game game, Player player) void
+  }
+  class CardSquare {
+    -DeckType deck
+    +land(Game game, Player player) void
+  }
+  class CornerSquare {
+    -CornerType kind
+    +land(Game game, Player player) void
+  }
+  class DeckType {
+    <<enumeration>>
+    CHANCE
+    COMMUNITY
+  }
+  class CornerType {
+    <<enumeration>>
+    GO
+    JAIL
+    FREE
+    GO_TO_JAIL
+  }
+}
+namespace DataStructures {
+  class Node~T~ {
+    +T data
+    +Node~T~ next
+    +Node~T~ prev
+  }
+  class CircularDoublyLinkedList~T~ {
+    -Node~T~ head
+    -int size
+    +addLast(T item) void
+    +insertAfter(Node~T~ node, T item) Node~T~
+    +remove(Node~T~ node) void
+    +getHead() Node~T~
+    +size() int
+  }
+  class LinkedQueue~T~ {
+    -QNode~T~ front
+    -QNode~T~ rear
+    -int size
+    +enqueue(T item) void
+    +dequeue() T
+    +peek() T
+    +isEmpty() boolean
+    +size() int
+    +remove(T item) boolean
+    +copyInto(ArrayList~T~ out) void
+  }
+  class QNode~T~ {
+    T data
+    QNode~T~ next
+  }
+}
+namespace GameEngine {
+  class Main {
+    +main(String[] args)$ void
+  }
+  class FileLoader {
+    +loadBoard(String path)$ Board
+    +loadCards(String path, Board board)$ ArrayList~Card~
+  }
+  class Game {
+    -Board board
+    -LinkedQueue~Player~ turnQueue
+    -LinkedQueue~Card~ chance
+    -LinkedQueue~Card~ community
+    -ArrayList~Player~ players
+    -ArrayList~Player~ bankruptOrder
+    -Dice dice
+    -GameLogger logger
+    -BuyDecider decider
+    -int turnCount
+    -int maxTurns
+    +addPlayer(String name) Player
+    +play() void
+    +playOneTurn() void
+    +finish() void
+    +takeTurn(Player p, int doublesCount) void
+    +landOn(Player p) void
+    +movePlayer(Player p, int steps) void
+    +sendToJail(Player p) void
+    +landOnOwnable(Player p, OwnableSquare s) void
+    +payTax(Player p, int amount) void
+    +drawCard(Player p, DeckType deck) void
+    +rank() ArrayList~Player~
+  }
+  class Board {
+    -CircularDoublyLinkedList~Square~ squares
+    -Node~Square~ goNode
+    -Node~Square~ jailNode
+    +step(Node~Square~ current, int steps, Player p) Node~Square~
+    +ownsGroup(Node~Square~ current, Node~Square~ start, String color, Player p) boolean
+    +findByName(Node~Square~ current, String name, int remaining) Node~Square~
+    +findNearest(Node~Square~ current, String type, int remaining) Node~Square~
+    +forwardDistance(Node~Square~ from, Node~Square~ to) int
+  }
+  class Player {
+    -String name
+    -int cash
+    -Node~Square~ position
+    -ArrayList~Square~ owned
+    -int jailAttempts
+    -ArrayList~Card~ jailFreeCards
+    -boolean inJail
+    -boolean bankrupt
+    -int joinOrder
+    +netWorth(ArrayList~Square~ owned, int index) int
+    +totalNetWorth() int
+    +countOwned(String type) int
+    +compareTo(Player other) int
+  }
+  class Dice {
+    -Random rng
+    -ArrayList~Integer~ scripted
+    +roll() int
+    +isDouble() boolean
+  }
+  class GameLogger {
+    -PrintWriter file
+    -ArrayList~String~ lines
+    +log(String... fields) void
+  }
+  class BuyDecider {
+    <<interface>>
+    +wantsToBuy(Player p, OwnableSquare s) boolean
+  }
+  class ConsoleBuyDecider {
+    -Scanner in
+  }
+  class AutoBuyDecider
+  class BoardView {
+    -boolean color
+    -boolean ascii
+    +render(Game game, String footer) void
+    +build(Game game) String
+    +narrate(String line, Game game) String
+  }
+}
+namespace Cards {
+  class Card {
+    -DeckType deck
+    -String id
+    -String text
+    -CardEffect effect
+    -String argument
+  }
+  class CardEffect {
+    <<enumeration>>
+    MOVE_TO
+    MOVE_BY
+    NEAREST
+    COLLECT
+    PAY
+    PAY_EACH
+    COLLECT_EACH
+    GO_TO_JAIL
+    JAIL_FREE
+  }
+}
+namespace Bonus_planned {
+  class DebugView {
+    <<bonus B4 - planned>>
+    +show(Game game, Player current) void
+  }
+  class Translator {
+    <<bonus language - planned>>
+    +t(String key) String
+  }
+}
+Square <|-- OwnableSquare
+OwnableSquare <|-- PropertySquare
+OwnableSquare <|-- TransitSquare
+Square <|-- TaxSquare
+Square <|-- CardSquare
+Square <|-- CornerSquare
+CardSquare --> DeckType
+CornerSquare --> CornerType
+Card --> CardEffect
+OwnableSquare --> "0..1" Player : owner
+CircularDoublyLinkedList *-- "1..*" Node : nodes
+LinkedQueue *-- "0..*" QNode : nodes
+Board *-- "1" CircularDoublyLinkedList : squares
+Game *-- "1" Board
+Game *-- "3" LinkedQueue : turnQueue, chance, community
+Game *-- "1" Dice
+Game *-- "1" GameLogger
+Game --> "1" BuyDecider
+BuyDecider <|.. ConsoleBuyDecider
+BuyDecider <|.. AutoBuyDecider
+Game o-- "2..6" Player : players
+Player --> "1" Node : position
+Player o-- "0..*" Square : owned
+Player o-- "0..*" Card : jailFreeCards
+FileLoader ..> Board : builds
+FileLoader ..> Card : builds
+Main ..> FileLoader
+Main ..> Game
+Main ..> BoardView
+BoardView ..> Game : reads only
+DebugView ..> Game : reads only
+Game ..> Translator : UI text only
