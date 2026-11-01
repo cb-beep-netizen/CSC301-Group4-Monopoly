@@ -9,8 +9,11 @@ rem  - Every run: adds new and changed files, commits, pushes.
 rem    Files are never deleted from GitHub by this script (use "git rm" for that).
 rem  - Local-only files (bin, logs, setup report with PC name, the brief) are
 rem    excluded through .gitignore.
+rem  - Privacy: commits are signed with the GitHub no-reply e-mail (asked once,
+rem    stored for this folder only); unpushed commits that carry a real e-mail
+rem    are re-signed before the push.
 rem  Output is written to sync-log.txt (not uploaded).
-rem  AI log: Conversation 01, Prompt 01.16 (Claude).
+rem  AI log: Conversation 01, Prompt 01.16, updated in Prompts 01.17 and 01.18 (Claude).
 rem ==========================================================================
 setlocal
 cd /d "%~dp0"
@@ -77,15 +80,14 @@ if not errorlevel 1 goto identity
 :identity
 git config user.name >nul 2>&1
 if errorlevel 1 call :askname
-git config user.email >nul 2>&1
-if errorlevel 1 call :askemail
+call :privateemail
 
 echo [3/5] Adding new and changed files ...
 git add --ignore-removal . >> "%OUT%" 2>&1
 git diff --cached --quiet
 if not errorlevel 1 (
   echo       Nothing new to commit.
-  goto push
+  goto rewrite
 )
 set "MSG="
 set /p "MSG=[4/5] Short description of this update (Enter = default): "
@@ -93,10 +95,39 @@ if "%MSG%"=="" set "MSG=CS: sync Monopoly project (game code, tests, design, AI 
 git commit -q -m "%MSG%" -m "Synced from C:\Claude\Monopoly with sync-to-github.bat. AI use is logged in AI-Usage-log.txt." -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" >> "%OUT%" 2>&1
 if errorlevel 1 goto fail
 
+:rewrite
+rem Re-sign any commit not yet on GitHub that carries a real (non no-reply) e-mail.
+set "AHEAD=0"
+for /f %%N in ('git rev-list --count origin/%BRANCH%..HEAD 2^>nul') do set "AHEAD=%%N"
+if "%AHEAD%"=="0" goto push
+git log origin/%BRANCH%..HEAD --format=%%ae%%n%%ce | findstr /v /i /c:"@users.noreply.github.com" >nul
+if errorlevel 1 goto push
+echo       Re-signing %AHEAD% unpushed commit(s) with your private no-reply e-mail ...
+git -c core.editor=true rebase -q origin/%BRANCH% --exec "git commit --amend --no-edit --reset-author -q" >> "%OUT%" 2>&1
+if errorlevel 1 goto fail
+
 :push
 echo [5/5] Pushing to GitHub ...
 git push -u origin %BRANCH% >> "%OUT%" 2>&1
+if not errorlevel 1 goto pushed
+findstr /i /c:"403" /c:"Permission to" "%OUT%" >nul 2>&1
 if errorlevel 1 goto fail
+echo.
+echo GitHub refused the push: the GitHub account saved on this PC has no write
+echo access to this repository (see sync-log.txt for the account name).
+echo   Fix A: the repository owner (cb-beep-netizen) adds your account under
+echo          Settings ^> Collaborators; accept the e-mail invitation, then run
+echo          this script again. Your commit is saved and will be pushed then.
+echo   Fix B: sign in with another GitHub account that already has access.
+set "SW="
+set /p "SW=Sign out the saved GitHub account and sign in with another one now? [Y/N]: "
+if /i not "%SW%"=="Y" goto fail
+(echo protocol=https& echo host=github.com& echo.) | git credential reject
+echo A GitHub sign-in window should open now ...
+git push -u origin %BRANCH% >> "%OUT%" 2>&1
+if errorlevel 1 goto fail
+
+:pushed
 echo. >> "%OUT%"
 echo PUSHED: >> "%OUT%"
 git log -1 --format="%%H %%an %%ad %%s" --date=iso >> "%OUT%" 2>&1
@@ -113,10 +144,27 @@ set /p "GN=Name to show on your commits (e.g. your GitHub name): "
 git config user.name "%GN%"
 exit /b 0
 
-:askemail
-set "GE="
-set /p "GE=Email for your commits (the one on your GitHub account): "
-git config user.email "%GE%"
+:privateemail
+rem Commits in this public repository use the GitHub no-reply address, never a real e-mail.
+set "CUR="
+for /f "delims=" %%E in ('git config --local user.email 2^>nul') do set "CUR=%%E"
+echo %CUR%| findstr /i /c:"@users.noreply.github.com" >nul
+if not errorlevel 1 exit /b 0
+echo.
+echo   To keep your e-mail private, commits are signed with your GitHub no-reply
+echo   address. Open https://github.com/settings/emails , tick "Keep my email
+echo   addresses private" and copy the address shown, which looks like
+echo   12345678+your-username@users.noreply.github.com
+:askprivate
+set "PE="
+set /p "PE=  Paste your GitHub no-reply e-mail: "
+echo %PE%| findstr /i /c:"@users.noreply.github.com" >nul
+if errorlevel 1 (
+  echo   That is not a ...@users.noreply.github.com address - please try again.
+  goto askprivate
+)
+git config --local user.email "%PE%"
+echo   Saved for this folder only. >> "%OUT%"
 exit /b 0
 
 :fail
