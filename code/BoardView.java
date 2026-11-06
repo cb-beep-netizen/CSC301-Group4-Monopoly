@@ -16,13 +16,19 @@ import java.util.ArrayList;
  * has run); otherwise the same screen is drawn without colour. Each player has
  * a colour; squares they own are tinted with it and show their name.
  * AI log: Conversation 01, Prompt 01.14, updated in Prompts 01.15 and 01.22;
- * twist log lines narrated in Conversation 03, Prompt 03.02 (Claude). Reviewed and understood by: ______
+ * twist log lines narrated in Conversation 03, Prompt 03.02; dark panel and
+ * --no-clear for the Eclipse console in Conversation 03, Prompt 03.04 (Claude). Reviewed and understood by: ______
  */
 public class BoardView {
     private static final int CW = 13;   // inner width of a square cell
     private static final int CH = 4;    // inner height of a square cell
     private static final String ESC = "\u001B[";
     private static final String RESET = ESC + "0m";
+    /**
+     * Dark panel behind the colour board, so the light text colours stay
+     * readable on a white console (Eclipse's default) as well as a black one.
+     */
+    private static final String PANEL = ESC + "48;5;234;38;5;252m";
 
     private final boolean color;
     private final boolean ascii;
@@ -33,6 +39,7 @@ public class BoardView {
     private boolean[][] vSeg;
     private final ArrayList<String> groupNames = new ArrayList<>();
     private boolean standingsMode;   // true after the players quit: centre shows the standings
+    private boolean noClear;         // Eclipse console: print a divider instead of clearing
 
     public BoardView(boolean color, boolean ascii, boolean rawEvents) {
         this.color = color;
@@ -91,7 +98,22 @@ public class BoardView {
         return System.getProperty("os.name", "").toLowerCase().startsWith("windows");
     }
 
+    /**
+     * Eclipse's console cannot clear the screen or move the cursor (it only
+     * understands colour codes), so with --no-clear each new board is printed
+     * below the previous one after a divider line instead.
+     */
+    public void setNoClear(boolean noClear) {
+        this.noClear = noClear;
+    }
+
     public void clearScreen() {
+        if (noClear) {
+            System.out.println();
+            System.out.println(styled("=".repeat(99), color ? ESC + "38;5;244m" : null));
+            System.out.flush();
+            return;
+        }
         if (color) {
             System.out.print(ESC + "H" + ESC + "2J" + ESC + "3J");
             System.out.flush();
@@ -516,7 +538,7 @@ public class BoardView {
     }
 
     private String styled(String text, String st) {
-        return st == null ? text : st + text + RESET;
+        return st == null ? text : PANEL + st + text + RESET;
     }
 
     private static int indexOfName(ArrayList<Player> players, String name) {
@@ -702,8 +724,11 @@ public class BoardView {
             String current = null;
             for (int x = 0; x < width; x++) {
                 String st = color ? style[y][x] : null;
+                if (color && x == 0) {
+                    out.append(PANEL);              // start every row on the dark panel
+                }
                 if (st == null ? current != null : !st.equals(current)) {
-                    out.append(RESET);
+                    out.append(RESET).append(PANEL);
                     if (st != null) {
                         out.append(st);
                     }
@@ -711,7 +736,7 @@ public class BoardView {
                 }
                 out.append(grid[y][x]);
             }
-            if (current != null) {
+            if (color) {
                 out.append(RESET);
             }
             out.append(System.lineSeparator());

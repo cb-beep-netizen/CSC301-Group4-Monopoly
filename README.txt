@@ -3,19 +3,48 @@ CSC301 GROUP ASSIGNMENT - MONOPOLY GAME ("CAPITAL CIRCUIT", Abu Dhabi edition)
 Console-based simplified Monopoly in Java, built to the rules in the CSC301
 brief (Dr Zakaria Khiati, ADU, 27 Oct 2026).
 
-REQUIREMENTS
-  JDK 21 or later (developed with Eclipse Temurin JDK 25 LTS; compiled with
-  --release 21). No external libraries.
+REQUIREMENTS (the project is built and run in Eclipse only)
+  - JDK 21 or later (developed with Eclipse Temurin JDK 25 LTS). No external
+    libraries.
+  - Eclipse IDE for Java Developers 2023-12 or later (Java 21 support). With
+    JDK 25, Eclipse 2025-09 needs "Java 25 Support" from the Eclipse
+    Marketplace; later releases include it.
+  - Any AI assistant inside Eclipse switched off (brief 7.3).
 
-COMPILE
-  Windows:  build.bat
-  Any OS:   javac --release 21 -encoding UTF-8 -d bin code/*.java
+OPEN THE PROJECT IN ECLIPSE (once per laptop)
+  1. Window > Preferences > Java > Installed JREs: add the JDK (21 or later).
+  2. File > Import > General > Existing Projects into Workspace > Next.
+  3. Select root directory: this Monopoly folder. Tick "Monopoly". Leave
+     "Copy projects into workspace" UNTICKED. Finish.
+  Eclipse reads .project, .classpath and .settings\ from this folder: source
+  folders code and tests, compiler compliance 21 with --release, UTF-8, output
+  to bin\. It builds automatically (Project > Build Automatically).
+  Only one project called "Monopoly" can be open in a workspace.
 
-RUN
-  Windows:  run.bat [options]
-  Any OS:   java -cp bin Main code/data/board.txt code/data/cards.txt [options]
+RUN (Run menu > Run History / Favorites, or the green Run button's list)
+  The four entries come from eclipse\*.launch and appear after the import:
+    Monopoly - Play            asks for player names, then plays on the
+                               colour board (Enter = roll, Y/N = buy, Q = quit)
+    Monopoly - Play with seed  as Play, also asks for a seed (same seed =
+                               same dice and card order, for demos)
+    Monopoly - Twist demo      seed 73, plain log lines: T7 RECALL at turn 3,
+                               T1 REVERSE at turn 8, T3 EXPAND after turn 20
+    Monopoly - Tests           96 tests, then the constraint check (PASS/FAIL)
+  Click inside the Console view before typing. To change the options of an
+  entry: Run > Run Configurations > (entry) > Arguments.
+  Run As > Java Application on Main.java also works: with no file arguments
+  the game uses code/data/board.txt and code/data/cards.txt.
 
-  Options
+  ECLIPSE CONSOLE
+  The console shows colours (Window > Preferences > Run/Debug > Console >
+  ANSI Support, on by default) but cannot clear the screen, so with
+  --no-clear each turn's board is printed below the previous one after a
+  "=====" line. The colour board is drawn on its own dark panel, so it is
+  readable on the default white console. Board width: 99 columns (113 after
+  the T3 expansion); widen or maximise the Console view.
+
+  Options (Program arguments)
+    [board file] [card file]  default code/data/board.txt code/data/cards.txt
     --seed N          seed for dice and deck shuffling (same seed = same game)
     --players A,B,C   2 to 6 player names in turn order (otherwise asked)
     --auto            buy every square the player can afford (no prompts)
@@ -26,10 +55,11 @@ RUN
 
     --text            plain mode: print the Appendix C log lines, no board
     --color / --no-color   force colours on or off (default: detected)
+    --no-clear        print a divider instead of clearing (Eclipse console;
+                      automatic when there is no real console)
     --ascii           draw the board with + - | characters
     --log-lines       board view shows raw log lines instead of sentences
 
-  Example: run.bat --players Sara,Omar,Ali --seed 42
   Without --auto the game asks "Buy it ...? [Y/N]" whenever a player lands on
   an unowned square they can afford.
 
@@ -51,9 +81,9 @@ COLOURS
   Each player has a colour: 1 cyan, 2 pink, 3 yellow, 4 white, 5 orange,
   6 sky blue. A square a player owns is tinted with their colour and shows
   their name; their token is drawn in their colour (the player about to move
-  as a solid block). Colour works in the classic Windows 10/11 console, Windows
-  Terminal and the VS Code terminal. If you see codes such as "[1;38;5;51m"
-  instead of colours, run with --no-color.
+  as a solid block). Colour works in the Eclipse console (ANSI Support on).
+  If you see codes such as "[1;38;5;51m" instead of colours, switch ANSI
+  Support on, or remove --color and add --no-color in the run configuration.
 
 OUTPUT
   Every event is written in the Appendix C log format (TURN|1|Sara, ROLL|...,
@@ -65,12 +95,17 @@ FILES
   code\data\board.txt     our 24-square board + 3 EXPAND lines (Appendix B.1 format)
   code\data\cards.txt     our 12 Chance + 12 Community cards (Appendix B.2),
                           incl. REVERSE and RECALL in each deck
-  tests\GameTests.java    93 tests incl. the brief 8.2 scenarios (also T1),
-                          the twists and the board view
-  tests\check_constraints.py  static check: allowed imports, no banned
+  tests\GameTests.java    96 tests incl. the brief 8.2 scenarios (also T1),
+                          the twists and the board view; then runs
+  tests\ConstraintCheck.java  static check: allowed imports, no banned
                           collections, required methods recursive with no loops
-  run-tests.bat           builds and runs both
+  tests\check_constraints.py  the same check in Python (optional)
+  .project, .classpath, .settings\   Eclipse project (import, see above)
+  eclipse\*.launch        the four Run menu entries
   design\                 UML class diagram and design notes
+  CSC301_Group4_Monopoly_Rulebook.pdf   rules as implemented (our twists
+                          T1, T3, T7 highlighted), data structures drawn at
+                          pointer level, demo revision questions
 
 DATA STRUCTURES (brief Section 4)
   Board      own CircularDoublyLinkedList<Square>; positions are Node<Square>
@@ -107,7 +142,8 @@ TWISTS IMPLEMENTED (brief Appendix A) - Group 4: T1, T3, T7
                 nothing changes and no RECALL line is printed.
                 Log: RECALL|<deck>|<id1>|<id2>|<id3> (front first).
   Demo of all three twists in one game (same log every time):
-    run.bat --players Sara,Omar,Ali,Huda --seed 73 --auto --text --max-turns 24
+    Run menu > Monopoly - Twist demo
+    (--players Sara,Omar,Ali,Huda --seed 73 --auto --text --max-turns 24)
     turn 3  Ali draws C12 RECALL   -> RECALL|CHANCE|C3|C1|C2
     turn 8  Huda draws K11 REVERSE -> ORDER|Ali|Omar|Sara (turns 9-12: Ali,
             Omar, Sara, Huda)

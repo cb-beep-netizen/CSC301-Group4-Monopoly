@@ -5,13 +5,15 @@ import java.util.Random;
  * GameTests - scenario tests for the CSC301 Monopoly core (not submitted as game code).
  * Uses scripted dice and unshuffled decks so every expected log line is known.
  * Uses only ArrayList and Random from java.util, like the game code.
- * Run: java -cp bin;tests-bin GameTests <test-board> <board> <cards>
+ * Run in Eclipse: Run menu > Monopoly - Tests (arguments: <test-board> <board> <cards> [code folder]).
+ * After the tests it runs ConstraintCheck on the code folder.
  * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14, 01.15 and 01.22;
- * twist tests (T1, T3, T7) added in Conversation 03, Prompt 03.02 (Claude).
+ * twist tests (T1, T3, T7) added in Conversation 03, Prompt 03.02; Eclipse
+ * changes (ConstraintCheck run, no-clear, defaults) in Prompt 03.04 (Claude).
  */
 public class GameTests {
     static int pass = 0, fail = 0;
-    static String TEST_BOARD, BOARD, CARDS;
+    static String TEST_BOARD, BOARD, CARDS, CODE;
 
     static void check(String name, boolean ok, String detail) {
         if (ok) { pass++; System.out.println("PASS  " + name); }
@@ -65,6 +67,7 @@ public class GameTests {
 
     public static void main(String[] args) throws Exception {
         TEST_BOARD = args[0]; BOARD = args[1]; CARDS = args[2];
+        CODE = args.length > 3 ? args[3] : "code";
         dataStructures();
         scenarioGoBack3();
         scenarioRentBankruptWithJailFree();
@@ -91,10 +94,12 @@ public class GameTests {
         twistT3Expansion();
         twistT3LoaderErrors();
         twistCardMovesAvoidCardSquares();
+        eclipseSupport();
         determinismAndFuzz();
         System.out.println();
         System.out.println("RESULT: " + pass + " passed, " + fail + " failed");
-        System.exit(fail == 0 ? 0 : 1);
+        boolean constraints = ConstraintCheck.run(args.length > 3 ? args[3] : "code");   // static check, same run
+        System.exit(fail == 0 && constraints ? 0 : 1);
     }
 
     static void dataStructures() {
@@ -576,6 +581,38 @@ public class GameTests {
             }
         }
         return null;
+    }
+
+    // Eclipse: colour board on its own dark panel; the Java constraint check catches violations.
+    static void eclipseSupport() throws Exception {
+        Game g = game(BOARD, cards(), NEVER, new Integer[]{}, "Sara", "Omar");
+        String coloured = new BoardView(true, false, false).build(g);
+        boolean everyRowOnPanel = true;
+        for (String r : coloured.split(System.lineSeparator())) if (!r.startsWith("\u001B[48;5;234;38;5;252m")) everyRowOnPanel = false;
+        check("Colour board: every row starts on the dark panel (readable on Eclipse's white console)", everyRowOnPanel, "");
+        String plainView = new BoardView(false, false, false).build(g);
+        check("Plain board (no colour) has no escape codes", !plainView.contains("\u001B["), "");
+        java.io.File tmp = java.nio.file.Files.createTempDirectory("cc").toFile();
+        java.io.File src = new java.io.File(CODE);
+        for (java.io.File f : src.listFiles()) {
+            if (!f.getName().endsWith(".java")) continue;
+            String text = new String(java.nio.file.Files.readAllBytes(f.toPath()), "UTF-8");
+            if (f.getName().equals("QueueTwists.java")) text = text.replace("if (q.isEmpty()) {", "if (q.size() == 0) {");
+            if (f.getName().equals("BoardView.java")) text = "import java.util.Arrays;\n" + text;
+            if (f.getName().equals("Player.java")) text = text.replace("public int netWorth(", "public int netWorthOld(");
+            java.nio.file.Files.write(new java.io.File(tmp, f.getName()).toPath(), text.getBytes("UTF-8"));
+        }
+        java.io.PrintStream out = System.out;
+        java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();
+        System.setOut(new java.io.PrintStream(buf, true, "UTF-8"));
+        boolean ok = ConstraintCheck.run(tmp.getPath());
+        System.setOut(out);
+        String report = buf.toString("UTF-8");
+        for (java.io.File f : tmp.listFiles()) f.delete();
+        tmp.delete();
+        check("ConstraintCheck reports q.size() in reverse, import java.util.Arrays and a missing required method", !ok
+                && report.contains("reverse uses q.size()") && report.contains("import java.util.Arrays not allowed")
+                && report.contains("required method netWorth not found"), report);
     }
 
     static void determinismAndFuzz() throws Exception {
