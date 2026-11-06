@@ -1,0 +1,55 @@
+# ============================================================================
+# CSC301 Monopoly - "Capital Circuit" (Abu Dhabi edition) - BOARD FILE
+# Format (brief Appendix B.1): one square per line, fields separated by |
+#   GO|name  JAIL|name  FREE|name  GO_TO_JAIL|name  CHANCE|name  COMMUNITY|name
+#   PROPERTY|name|colour group|price|base rent
+#   TRANSIT|name|price
+#   TAX|name|amount
+# Squares are listed in board order starting with GO. 24 squares (20-28 allowed).
+# Exactly one GO, one JAIL, one GO_TO_JAIL. Names are unique.
+# Colour groups: BLUE (2), GREEN (3), ORANGE (3), RED (3). TRANSIT x3.
+# Group 4 twists: T1 Reverse, T3 Expansion, T7 Recall. Only T3 needs board
+# lines: the EXPAND lines at the end of this file (not part of the starting
+# board). No EARTHQUAKE / MIRAGE / PORTAL squares (T2 / T5 / T8 not ours).
+# ============================================================================
+GO|GO
+PROPERTY|Corniche Road|BLUE|60|4
+COMMUNITY|Community Chest
+PROPERTY|Al Bateen|BLUE|60|6
+TAX|Municipality Fee|100
+TRANSIT|Metro Red Line|200
+JAIL|Jail
+PROPERTY|Yas Island|GREEN|100|8
+PROPERTY|Saadiyat Beach|GREEN|120|10
+CHANCE|Chance
+PROPERTY|Al Reem Island|GREEN|140|10
+TRANSIT|Metro Green Line|200
+FREE|Free Parking
+PROPERTY|Khalifa City|ORANGE|160|12
+COMMUNITY|Community Fund
+PROPERTY|Masdar City|ORANGE|180|14
+TRANSIT|Etihad Rail|200
+PROPERTY|Mussafah|ORANGE|200|16
+GO_TO_JAIL|Go To Jail
+PROPERTY|Al Maryah Island|RED|220|18
+CHANCE|Chance Desk
+TAX|Darb Toll Gate|75
+PROPERTY|Emirates Palace|RED|260|22
+PROPERTY|Hudayriyat Island|RED|280|24
+# ============================================================================
+# T3 EXPANSION (brief Appendix A, B.1)
+#   EXPAND|<existing square to insert after>|<full square definition>
+#   Applied at the end of turn 20, in file order; each new square is linked
+#   directly after the named square. Players do not move. 24 + 3 = 27 squares
+#   (limit 28). Placement chosen so that:
+#   - Al Mina makes BLUE a 3-square group: an owner of both old BLUE squares
+#     loses the doubled rent until they also buy Al Mina.
+#   - Abu Dhabi Airport Express is a 4th TRANSIT (rent up to 25 x 2^3 = 200).
+#   - Lulu Island is inserted after the LAST square, so its next is GO and
+#     GO's prev becomes Lulu Island (pointer-tracing case for the demo).
+#   - No Chance card move (MOVE_BY -3 / +2 from either Chance square) ends on a
+#     CHANCE or COMMUNITY square after the expansion (design note D9 holds).
+# ============================================================================
+EXPAND|Al Bateen|PROPERTY|Al Mina|BLUE|80|6
+EXPAND|Metro Green Line|TRANSIT|Abu Dhabi Airport Express|200
+EXPAND|Hudayriyat Island|PROPERTY|Lulu Island|RED|300|26

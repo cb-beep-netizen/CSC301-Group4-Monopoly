@@ -1,0 +1,41 @@
+# ============================================================================
+# CSC301 Monopoly - "Capital Circuit" - CARD FILE
+# Format (brief Appendix B.2): <deck>|<id>|<text>|<effect>|<argument>
+# Effects: MOVE_TO <square name> | MOVE_BY <int> | NEAREST TRANSIT |
+#          COLLECT <amt> | PAY <amt> | PAY_EACH <amt> | COLLECT_EACH <amt> |
+#          GO_TO_JAIL | JAIL_FREE | REVERSE (T1) | RECALL (T7)
+#          (no argument -> line ends with |)
+# Each deck is shuffled once at game start (seeded Random), then used as a
+# LinkedQueue: draw = dequeue, apply, enqueue at back (JAIL_FREE kept by the
+# player until used, then enqueued at the back of its own deck).
+# Design rule: no card move ends on a CHANCE or COMMUNITY square, so landOn()
+# recursion depth is at most 2 (card square -> destination square).
+# Twist cards (Group 4): REVERSE (T1) reverses the turn queue; RECALL (T7)
+# brings the last 3 cards of the same deck to the front. One of each per deck.
+# ============================================================================
+# ---- CHANCE (12 cards) ----
+CHANCE|C1|Advance to GO|MOVE_TO|GO
+CHANCE|C2|Go back 3 squares|MOVE_BY|-3
+CHANCE|C3|Take the nearest metro|NEAREST|TRANSIT
+CHANCE|C4|Speeding fine on Sheikh Zayed Road|PAY|15
+CHANCE|C5|Visit the Louvre: advance to Saadiyat Beach|MOVE_TO|Saadiyat Beach
+CHANCE|C6|Grand Prix weekend: advance to Yas Island|MOVE_TO|Yas Island
+CHANCE|C7|Bank dividend paid to you|COLLECT|50
+CHANCE|C8|Get out of Jail free|JAIL_FREE|
+CHANCE|C9|Advance to Hudayriyat Island|MOVE_TO|Hudayriyat Island
+CHANCE|C10|Move forward 2 squares|MOVE_BY|2
+CHANCE|C11|Road works on the E11: traffic turns back - turn order reversed|REVERSE|
+CHANCE|C12|Old files reopened: the last 3 Chance cards move to the top|RECALL|
+# ---- COMMUNITY (12 cards) ----
+COMMUNITY|K1|Research grant awarded|COLLECT|200
+COMMUNITY|K2|Host a Corniche picnic for everyone|PAY_EACH|50
+COMMUNITY|K3|Birthday gifts from each player|COLLECT_EACH|10
+COMMUNITY|K4|Go directly to Jail|GO_TO_JAIL|
+COMMUNITY|K5|Get out of Jail free|JAIL_FREE|
+COMMUNITY|K6|Hospital fees|PAY|100
+COMMUNITY|K7|Utility refund from the municipality|COLLECT|20
+COMMUNITY|K8|Advance to GO|MOVE_TO|GO
+COMMUNITY|K9|Evening walk: advance to Corniche Road|MOVE_TO|Corniche Road
+COMMUNITY|K10|School fees|PAY|50
+COMMUNITY|K11|Majlis etiquette: elders first - turn order reversed|REVERSE|
+COMMUNITY|K12|Lost and found: the last 3 Community cards move to the top|RECALL|

@@ -1,0 +1,26 @@
+{
+  // CSC301 Monopoly workspace: all VS Code AI features are OFF so every AI
+  // contribution comes from the logged Claude Project conversation (brief 7.3).
+  "chat.disableAIFeatures": false,
+  "github.copilot.enable": { "*": false },
+  "editor.inlineSuggest.enabled": false,
+
+  // Java: source in .\code, compiled classes in .\bin (kept out of the zip).
+  "java.project.sourcePaths": ["code", "tests"],
+  "java.project.outputPath": "bin",
+  "java.project.referencedLibraries": [],
+  "java.configuration.updateBuildConfiguration": "automatic",
+
+  // Pin the project to Temurin 25 so the Android JDK 17 on F:\ is never used.
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-25",
+      "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-25.0.5.8-hotspot",
+      "default": true
+    }
+  ],
+  "java.jdt.ls.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-25.0.5.8-hotspot",
+
+  "files.encoding": "utf8",
+  "files.exclude": { "bin": true, "tests-bin": true }
+}

@@ -1,0 +1,174 @@
+CSC301 MONOPOLY ("CAPITAL CIRCUIT") - CORE DESIGN NOTES v3          2026-11-06
+Feeds the design document (brief Section 9). Twists T1, T3, T7 implemented
+(Conversation 03, Prompt 03.02); bonus B4 + language planned.
+
+1. FOLDERS
+   code\            Java source, default package (27 .java files)
+   code\data\       board.txt (+3 EXPAND lines), cards.txt (24 cards incl. twist cards)
+   tests\           GameTests.java (96 checks), ConstraintCheck.java, test-board.txt, check_constraints.py (optional)
+   design\          UML_Class_Diagram.(mmd|png|svg) v2 as built, this file
+   bin\, tests-bin\ compiled classes (not submitted)
+   Eclipse project files at the root (.project, .classpath, .settings\) and the
+   Run menu entries in eclipse\*.launch: Play, Play with seed, Twist demo, Tests
+   (Eclipse is the only supported build and run route since Prompt 03.04, D28)
+   Options: [board cards] [--seed N] [--players A,B,C] [--auto] [--max-turns N] [--dice 3,4,..] [--log F] [--pause] [--no-clear]
+   Planned bonus flags: --debug (B4), --lang en|fr|ar
+
+2. CLASSES (fixed names/signatures from brief Section 5 kept exactly)
+   Squares     Square (abstract) > OwnableSquare (abstract, added) > PropertySquare, TransitSquare
+               Square > TaxSquare, CardSquare, CornerSquare; enums DeckType, CornerType
+   Structures  Node<T>, CircularDoublyLinkedList<T>, LinkedQueue<T> (+ private QNode<T>)
+   Cards       Card (id, text, effect, argument, deck), enum CardEffect
+               (+ REVERSE, RECALL)
+   Twists      QueueTwists (static recursive reverse, rotate - T1, T7),
+               Expansion (one EXPAND line - T3); hooks in Game and Board
+   Engine      Player, Board, Dice, GameLogger, Game, FileLoader (added), Main,
+               BuyDecider interface (added) + ConsoleBuyDecider, AutoBuyDecider
+   UI          BoardView (added, Prompt 01.14): console board like the prototype
+   Bonus       DebugView (B4, read-only), Translator (language toggle, UI text only)
+
+3. KEY DECISIONS
+ D1 OwnableSquare holds price + owner once for PropertySquare and TransitSquare.
+    Player.owned stays ArrayList<Square> (spec); it only ever holds OwnableSquare.
+ D2 Card carries its deck, so a used JAIL_FREE card returns to its own deck.
+ D3 Player.jailFreeCards is ArrayList<Card>, not a counter (the card itself goes back).
+ D4 Salary: Board.step() adds 200 when moving forward onto/past GO and sets a
+    flag; Game then prints MOVE first and SALARY second (Appendix C.1 order).
+ D5 Ranking: Player implements java.lang.Comparable and Collections.sort() is used
+    on an ArrayList. java.util.Comparator is avoided - it is in java.util and not
+    on the allowed list (ArrayList, Scanner, Random, Collections).
+ D6 Bankrupt player removal: LinkedQueue.remove(T) rotates the queue once
+    (dequeue/enqueue, recursive) and drops the target - others keep their order.
+ D7 PAY_EACH / COLLECT_EACH visit other players in current turn-queue order by one
+    full rotation of the queue (current player is not in the queue during a turn).
+ D8 Determinism: one seeded Random shared by Dice and Collections.shuffle; decks
+    shuffled once at start, CHANCE first then COMMUNITY. Same seed = same game.
+ D9 landOn() termination: the card file never moves a player onto a CHANCE or
+    COMMUNITY square, so recursion depth <= 2. Checked by GameTests
+    (twistCardMovesAvoidCardSquares) on the 24-square board AND on the
+    27-square board after the T3 expansion.
+ D10 GameLogger writes only Appendix C lines (to console and game-log.txt).
+    Prompts, board display, DebugView and translations never enter the log.
+ D11 Extension points for twists: new square = new Square subclass with land();
+    new card = new CardEffect value + one case in Game's card handler.
+    Used as planned: T1 and T7 are two CardEffect values + two cases in
+    applyCard; T3 needed no new Square subclass (it reuses insertAfter).
+ D12 The 8 mandatory recursive methods contain no for/while/do; any helper they
+    call is recursive or O(1). Loops are allowed elsewhere (game loop, file read).
+ D13 step(): base case steps == 0 returns current; steps > 0 follows next;
+    steps < 0 follows prev and never pays salary.
+ D14 A drawn card goes back to the bottom of its deck as soon as its own effect
+    is done - for a move card, before the destination square is resolved.
+ D15 Buying goes through a BuyDecider: ConsoleBuyDecider asks Y/N (default),
+    AutoBuyDecider (--auto) buys when affordable, for scripted test games.
+ D16 Dice can take a scripted list of values (--dice) before falling back to the
+    seeded Random - reproduces the brief 8.2 scenarios exactly in tests and demo.
+ D17 MOVE_TO always moves forward; if the target is the current square the
+    player goes a full lap (and passes GO).
+ D19 Two console modes. Default board view (BoardView): ring of squares,
+    player table, turn queue, last turn's events in plain words; Enter to
+    roll. --text prints the Appendix C lines instead. Both modes write the same
+    log file. BoardView only reads state; it walks the ring with next for
+    display and is never called from the required recursive methods (the buy
+    prompt inside landOn prints one line, no board redraw).
+ D20 Colour (Prompt 01.15): each player has a colour (cyan, pink, yellow,
+    white, orange, sky blue) and a dark tint of it; owned squares are tinted
+    with the owner's colour and show the owner's name. In the classic Windows
+    console, colour processing is switched on at start-up by running a short
+    cmd.exe command on the same console (as Python's os.system("") does).
+    --no-color turns colours off.
+ D21 Standings (Prompt 01.22): the centre lists each player's properties
+    (board order, shortened with "+N more" to fit); on game over or Q the
+    centre shows the ranking with net worth and cash, and a full report under
+    the board shows rank, net worth = cash + property value, and every owned
+    property. Q writes no END line: Appendix C allows only LAST_PLAYER and
+    MAX_TURNS. --text mode prints the same report after the RANK lines.
+ D18 Helpers called from the required recursive methods are recursive or O(1)
+    too: bankruptcy releases squares and returns JAIL_FREE cards recursively,
+    PAY_EACH / COLLECT_EACH recurse over a queue-order snapshot, the console
+    Y/N prompt re-asks recursively.
+
+4a. TWISTS (Group 4: T1 Reverse, T3 Expansion, T7 Recall) - brief Appendix A
+ D22 T1 REVERSE: QueueTwists.reverse(q) - base case q empty; recursive case
+    x = dequeue, reverse(rest), enqueue(x); terminates as each call removes one
+    element. Only enqueue/dequeue/isEmpty (checked by ConstraintCheck);
+    the call stack is the only temporary storage. Applied to the WAITING
+    players only: the current player is not queued during the turn and is
+    enqueued at the back by playOneTurn as usual (A draws REVERSE, queue
+    B,C,D -> D,C,B, next four turns D,C,B,A). Logs REVERSE|p then ORDER|...
+    (ORDER read with one copyInto rotation after the reversal).
+ D23 T1 knock-on: PAY_EACH / COLLECT_EACH later in the game follow the new
+    queue order (brief 3.5 says "current turn-queue order"); ranking ties
+    still use join order (brief 3.7), not queue order.
+ D24 T7 RECALL: QueueTwists.rotate(q, k) - base case k <= 0 or q empty;
+    recursive case enqueue(dequeue()), rotate(q, k - 1); terminates as k falls
+    by 1. After RECALL is dequeued, n = deck.size(); rotate(deck, n - 3)
+    leaves the last 3 cards at the front in their order; RECALL then goes to
+    the back (normal card return, D14). Cost O(n).
+ D25 T7 edge cases: n <= 3 -> no change and NO RECALL line (the log format
+    needs three ids; the brief says "nothing changes"). Held JAIL_FREE cards
+    are not in the deck and are not counted. Open question Q3 below.
+ D26 T3 EXPAND: board-file lines EXPAND|<after>|<square definition>, parsed by
+    the same parseSquare() as normal squares, validated at load time (anchor
+    exists or was added by an earlier EXPAND line; new name unique; no GO /
+    JAIL / GO_TO_JAIL; EXPAND lines last; 24 + 3 <= 28 squares). Kept in a
+    LinkedQueue<Expansion> on the Board (file order = FIFO). At the end of
+    turn 20 (after the player is re-enqueued, before the end-of-game check)
+    the recursive Game.applyExpansions dequeues each line, finds the anchor
+    with findByName and calls insertAfter (O(1)). Logs EXPAND|new|after.
+    If the game ends before turn 20 the expansion never happens; with
+    --max-turns 20 the EXPAND lines come just before END.
+ D27 T3 knock-on: positions are node references, so no player moves and
+    nothing is renumbered. ownsGroup walks the live ring, so a new BLUE square
+    (Al Mina) means a previous BLUE full-group owner loses doubled rent until
+    they also own it. transitRent counts owned TRANSIT squares, so a 4th
+    transit allows 25 x 2^3 = 200. Lulu Island is inserted after the last
+    square: insertAfter sets Lulu.next = GO and GO.prev = Lulu, so step()
+    still pays the salary when it reaches goNode. size() is live, so searches
+    (remaining = size) and the board view (8 x 8 ring) adapt.
+
+ D28 Eclipse only (CS, Prompt 03.04): build.bat, run.bat and run-tests.bat
+    removed; the project is imported into Eclipse and run from four shared
+    launch configurations. Compliance 21 with --release (same as the old
+    javac --release 21). Main defaults to code/data/board.txt and cards.txt
+    (working directory = project folder). The Eclipse console understands
+    colour codes but cannot clear the screen, so --no-clear prints a divider
+    between boards; the colour board sits on a dark panel (48;5;234, default
+    text 252) so it is readable on Eclipse's white console. The constraint
+    check was ported to Java (tests/ConstraintCheck.java, no regex because
+    java.util.regex is not on the allowed list) and runs after GameTests.
+
+4. BOARD (24 squares; 27 after the T3 expansion at turn 20)   GO(0) ... JAIL(6) ... FREE(12) ... GO_TO_JAIL(18)
+   BLUE 2 (60/60), GREEN 3 (100-140), ORANGE 3 (160-200), RED 3 (220-280),
+   TRANSIT 3 (200 each, rent 25/50/100), TAX 2 (100, 75), CHANCE 2, COMMUNITY 2.
+   EXPAND (T3): Al Mina BLUE 80/6 after Al Bateen; Abu Dhabi Airport Express
+   TRANSIT 200 after Metro Green Line; Lulu Island RED 300/26 after
+   Hudayriyat Island (new last square, next = GO).
+
+5. CARDS   CHANCE 12, COMMUNITY 12; all 9 standard effects covered, plus
+   REVERSE (C11, K11) and RECALL (C12, K12) for twists T1 and T7.
+   In 500 seeded 60-turn games: 421 REVERSE and 404 RECALL events.
+   Deliberate test cases built into the files:
+   - C3 NEAREST from "Chance Desk" wraps past GO to Metro Red Line (salary paid).
+   - C2 "Go back 3" from "Chance" lands on Jail (just visiting, no salary).
+   - K9 MOVE_TO Corniche Road from "Community Chest" goes forward round the whole
+     board (passes GO, salary paid) - MOVE_TO is always forward.
+   - K2 PAY_EACH 50 can bankrupt the payer part-way (brief 3.7).
+
+6. ECONOMY FINDING (simulation, 400 games per setting, 60 turns, 3-4 players)
+   Bankruptcies per game: 0.00 with the board rents, and still 0.00 with rents
+   x2, x3 and x4. With no houses and a 200 salary per lap, 1500 AED cannot be
+   drained in ~20 turns per player. Rents are kept in line with the brief's
+   sample values; bankruptcy and LAST_PLAYER are demonstrated with scripted
+   dice (tests and --dice), not by waiting for a random game.
+
+7. OPEN QUESTIONS FOR THE INSTRUCTOR
+   Q1 Which three twists are assigned to our group? CS chose T1, T3, T7 on
+      2026-11-06 (Conversation 03). Still to be checked against Blackboard:
+      an earlier teammate log mentioned T1, T5, T8.
+   Q2 Is the --auto buy policy acceptable for scripted test games, with the
+      interactive Y/N prompt as the default? (implemented, pending answer)
+   Q3 T7: when the deck holds 3 or fewer other cards, should a RECALL line
+      still be printed? (implemented: no line, D25)
+   Q4 T3: are EXPAND lines applied before the end-of-game check of turn 20?
+      (implemented: yes, D26)
