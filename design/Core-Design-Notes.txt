@@ -5,11 +5,13 @@ Feeds the design document (brief Section 9). Twists T1, T3, T7 implemented
 1. FOLDERS
    code\            Java source, default package (27 .java files)
    code\data\       board.txt (+3 EXPAND lines), cards.txt (24 cards incl. twist cards)
-   tests\           GameTests.java (93 checks), test-board.txt, check_constraints.py
+   tests\           GameTests.java (96 checks), ConstraintCheck.java, test-board.txt, check_constraints.py (optional)
    design\          UML_Class_Diagram.(mmd|png|svg) v2 as built, this file
    bin\, tests-bin\ compiled classes (not submitted)
-   build.bat / run.bat / run-tests.bat at the project root
-   Run: run.bat [--seed N] [--players A,B,C] [--auto] [--max-turns N] [--dice 3,4,..] [--log F] [--pause]
+   Eclipse project files at the root (.project, .classpath, .settings\) and the
+   Run menu entries in eclipse\*.launch: Play, Play with seed, Twist demo, Tests
+   (Eclipse is the only supported build and run route since Prompt 03.04, D28)
+   Options: [board cards] [--seed N] [--players A,B,C] [--auto] [--max-turns N] [--dice 3,4,..] [--log F] [--pause] [--no-clear]
    Planned bonus flags: --debug (B4), --lang en|fr|ar
 
 2. CLASSES (fixed names/signatures from brief Section 5 kept exactly)
@@ -89,7 +91,7 @@ Feeds the design document (brief Section 9). Twists T1, T3, T7 implemented
 4a. TWISTS (Group 4: T1 Reverse, T3 Expansion, T7 Recall) - brief Appendix A
  D22 T1 REVERSE: QueueTwists.reverse(q) - base case q empty; recursive case
     x = dequeue, reverse(rest), enqueue(x); terminates as each call removes one
-    element. Only enqueue/dequeue/isEmpty (checked by check_constraints.py);
+    element. Only enqueue/dequeue/isEmpty (checked by ConstraintCheck);
     the call stack is the only temporary storage. Applied to the WAITING
     players only: the current player is not queued during the turn and is
     enqueued at the back by playOneTurn as usual (A draws REVERSE, queue
@@ -124,6 +126,17 @@ Feeds the design document (brief Section 9). Twists T1, T3, T7 implemented
     square: insertAfter sets Lulu.next = GO and GO.prev = Lulu, so step()
     still pays the salary when it reaches goNode. size() is live, so searches
     (remaining = size) and the board view (8 x 8 ring) adapt.
+
+ D28 Eclipse only (CS, Prompt 03.04): build.bat, run.bat and run-tests.bat
+    removed; the project is imported into Eclipse and run from four shared
+    launch configurations. Compliance 21 with --release (same as the old
+    javac --release 21). Main defaults to code/data/board.txt and cards.txt
+    (working directory = project folder). The Eclipse console understands
+    colour codes but cannot clear the screen, so --no-clear prints a divider
+    between boards; the colour board sits on a dark panel (48;5;234, default
+    text 252) so it is readable on Eclipse's white console. The constraint
+    check was ported to Java (tests/ConstraintCheck.java, no regex because
+    java.util.regex is not on the allowed list) and runs after GameTests.
 
 4. BOARD (24 squares; 27 after the T3 expansion at turn 20)   GO(0) ... JAIL(6) ... FREE(12) ... GO_TO_JAIL(18)
    BLUE 2 (60/60), GREEN 3 (100-140), ORANGE 3 (160-200), RED 3 (220-280),

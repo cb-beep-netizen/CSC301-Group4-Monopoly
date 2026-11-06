@@ -1,7 +1,7 @@
 {
   // CSC301 Monopoly workspace: all VS Code AI features are OFF so every AI
   // contribution comes from the logged Claude Project conversation (brief 7.3).
-  "chat.disableAIFeatures": true,
+  "chat.disableAIFeatures": false,
   "github.copilot.enable": { "*": false },
   "editor.inlineSuggest.enabled": false,
 

@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -7,8 +8,8 @@ import java.util.Scanner;
  * Main - reads the options, loads the board and card files, adds the players
  * and runs the game.
  *
- * Usage:
- *   java -cp bin Main <board file> <card file> [options]
+ * Usage (Eclipse: Run menu > Monopoly - Play / Twist demo / Tests):
+ *   Main [<board file> <card file>] [options]   (default: code/data/board.txt code/data/cards.txt)
  * Options:
  *   --seed N         seed for dice and deck shuffling (same seed = same game)
  *   --players A,B,C  player names in turn order (otherwise asked on the console)
@@ -21,20 +22,34 @@ import java.util.Scanner;
  *   --color / --no-color   force colours on or off (default: detected)
  *   --ascii          draw the board with + - | instead of box-drawing characters
  *   --log-lines      board view shows raw log lines instead of plain sentences
+ *   --no-clear       do not clear the console; print a divider between boards (Eclipse console)
  * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14 and 01.22;
- * twist summary line added in Conversation 03, Prompt 03.02 (Claude). Reviewed and understood by: ______
+ * twist summary line added in Conversation 03, Prompt 03.02; Eclipse defaults
+ * (no-argument start, --no-clear) added in Conversation 03, Prompt 03.04 (Claude). Reviewed and understood by: ______
  */
 public class Main {
 
+    static final String DEFAULT_BOARD = "code/data/board.txt";
+    static final String DEFAULT_CARDS = "code/data/cards.txt";
+
     public static void main(String[] args) {
-        if (args.length < 2) {
-            System.out.println("Usage: java -cp bin Main <board file> <card file> [--seed N] [--players A,B,C]");
-            System.out.println("       [--auto] [--max-turns N] [--dice 3,4,6,6] [--log FILE] [--pause]");
-            System.out.println("       [--text] [--color | --no-color] [--ascii] [--log-lines]");
+        // Run from Eclipse: the working directory is the project folder, so the
+        // board and card files default to code/data when no paths are given.
+        // Usage: Main [<board file> <card file>] [options]
+        int first = 0;
+        String boardPath = DEFAULT_BOARD;
+        String cardPath = DEFAULT_CARDS;
+        if (args.length >= 2 && !args[0].startsWith("--")) {
+            boardPath = args[0];
+            cardPath = args[1];
+            first = 2;
+        }
+        if (!new File(boardPath).exists()) {
+            System.out.println("Cannot find " + boardPath + " (working directory: " + new File(".").getAbsolutePath() + ").");
+            System.out.println("In Eclipse, use the Run menu entries 'Monopoly - Play', '- Twist demo' or '- Tests',");
+            System.out.println("or set Run Configurations > Arguments > Working directory to the Monopoly project folder.");
             System.exit(1);
         }
-        String boardPath = args[0];
-        String cardPath = args[1];
         long seed = System.nanoTime();
         boolean seedGiven = false;
         String playerList = null;
@@ -44,12 +59,13 @@ public class Main {
         boolean ascii = false;
         boolean logLines = false;
         Boolean colorChoice = null;
+        boolean noClear = System.console() == null;   // no real console (e.g. Eclipse on Java 21)
         int maxTurns = Game.DEFAULT_MAX_TURNS;
         String logPath = "game-log.txt";
         ArrayList<Integer> scriptedDice = null;
 
         try {
-            for (int i = 2; i < args.length; i++) {
+            for (int i = first; i < args.length; i++) {
                 String a = args[i];
                 if (a.equals("--seed")) {
                     seed = Long.parseLong(value(args, ++i, a));
@@ -66,6 +82,8 @@ public class Main {
                     ascii = true;
                 } else if (a.equals("--log-lines")) {
                     logLines = true;
+                } else if (a.equals("--no-clear")) {
+                    noClear = true;
                 } else if (a.equals("--color")) {
                     colorChoice = Boolean.TRUE;
                 } else if (a.equals("--no-color")) {
@@ -110,7 +128,9 @@ public class Main {
                 runText(game, in, pause);
             } else {
                 boolean color = colorChoice != null ? colorChoice : BoardView.ansiSupported();
-                runBoardView(game, new BoardView(color, ascii, logLines), in, auto && !pause, logPath);
+                BoardView view = new BoardView(color, ascii, logLines);
+                view.setNoClear(noClear);
+                runBoardView(game, view, in, auto && !pause, logPath);
             }
         } catch (IOException e) {
             System.out.println("Cannot read file: " + e.getMessage());
