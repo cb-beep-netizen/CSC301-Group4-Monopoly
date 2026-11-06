@@ -1278,6 +1278,92 @@ what do i do on this step
    hashes quoted in the AI log stay valid; do not delete the CS-Monopoly
    branch afterwards (sync-to-github.bat uses it).
 
+[Prompt 03.17 | 2026-11-06 20:06 GST | CS]
+(Attachment: screenshot of the pull request - 6 commits ending with 32e3698,
+63 files changed, Merge pull request button)
+no wait this is the original pull request
+
+[AI actions 03.17]
+ - Fetched the repository: GitHub's CS-Monopoly still ends at 32e3698; the
+   3 commits made on the PC (4363bc7, 6c389c2, 21daec3) are not pushed yet.
+ - No files changed (answer only).
+
+[AI response 03.17 - summary]
+ - It is the right pull request; a pull request follows its branch, so no
+   new one is needed. After sync-to-github.bat pushes from the PC it shows 9
+   commits, then merge as described in 03.16.
+
+[Prompt 03.18 | 2026-11-06 20:07 GST | CS]
+omg so do i merge this one or no?
+
+[AI actions 03.18]
+ - Fetched again: GitHub still at 32e3698 (old .bat files present); PC 3
+   commits ahead. No files changed.
+
+[AI response 03.18 - summary]
+ - Not yet: run sync-to-github.bat on the PC first, then merge this same
+   pull request.
+
+[Prompt 03.19 | 2026-11-06 20:09 GST | CS]
+(Attachment: screenshot of the same pull request, still 6 commits ending
+with 32e3698)
+this obe?
+
+[AI actions 03.19]
+ - Fetched: GitHub still at 32e3698; sync-to-github.bat has not run since
+   1 November (sync-log.txt). No files changed.
+
+[AI response 03.19 - summary]
+ - Same pull request, still not ready: the screenshot shows 6 commits ending
+   32e3698. Run sync-to-github.bat on the PC first (exact steps given); merge
+   only when the list ends with the AI-log commit.
+
+[Prompt 03.20 | 2026-11-06 20:12 GST | CS]
+(Attachment: screenshot of pull request #1, still 6 commits ending 32e3698)
+can we just commit?
+
+[AI actions 03.20]
+ - Compared 32e3698 (on GitHub) with the PC branch: code\ and tests\ are
+   identical; the differences are the three .bat files, the AI log (to
+   03.06), the AI usage PDF, 3 README lines, the .vscode AI setting and the
+   Eclipse-saved Tests launch file. No files changed.
+
+[AI response 03.20 - summary]
+ - Yes, merging pull request #1 now is safe: main gets the working game.
+   The remaining fixes reach main later: run sync-to-github.bat on the PC,
+   then open a second small pull request CS-Monopoly -> main.
+
+[Prompt 03.21 | 2026-11-06 20:14 GST | CS]
+did we update the read me file?
+
+[AI actions 03.21]
+ - Checked README.txt in the PC branch and on GitHub, and README.md.
+   No files changed.
+
+[AI response 03.21 - summary]
+ - README.txt was updated (Prompts 03.02, 03.04, 03.12): twists, Eclipse
+   import and run, files list. GitHub's copy (32e3698) has everything except
+   the 3 rulebook lines, which follow with the next sync. README.md (the
+   repository front page) still holds only the repository name; offered to
+   add a short pointer to README.txt.
+
+[Prompt 03.22 | 2026-11-06 20:15 GST | CS]
+yes please make it, make the instructions very easy to understand
+
+[AI actions 03.22]
+ - Wrote README.md (the GitHub front page): what the game is, the three
+   twists, Eclipse set-up in 5 numbered steps (whole folder, copy unticked),
+   the four Run entries, how to play, fixes for the problems met today
+   (missing Run entries, wrong working folder, colour codes, duplicate
+   project name) and a map of the repository. Checked the GitHub-style
+   rendering. Committed on CS-Monopoly with this log entry.
+ - Noted: pull request #1 was merged by CS (main = c0d1921, merge signed
+   with the no-reply address).
+
+[AI response 03.22 - summary]
+ - README.md ready; it reaches GitHub with the next sync-to-github.bat,
+   then a second pull request CS-Monopoly -> main.
+
 ================================================================================
  PART C - AI REFLECTION (1 to 2 pages; minimum three cases)
 ================================================================================
