@@ -21,7 +21,8 @@ import java.util.Scanner;
  *   --color / --no-color   force colours on or off (default: detected)
  *   --ascii          draw the board with + - | instead of box-drawing characters
  *   --log-lines      board view shows raw log lines instead of plain sentences
- * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14 and 01.22 (Claude). Reviewed and understood by: ______
+ * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14 and 01.22;
+ * twist summary line added in Conversation 03, Prompt 03.02 (Claude). Reviewed and understood by: ______
  */
 public class Main {
 
@@ -96,7 +97,10 @@ public class Main {
             Game game = new Game(board, cards, rng, true, dice, logger, decider, maxTurns);
 
             System.out.println("=== Capital Circuit - CSC301 simplified Monopoly ===");
-            System.out.println("Board: " + board.size() + " squares, " + cards.size() + " cards. Seed: " + seed
+            int pending = board.getPendingExpansions().size();
+            System.out.println("Board: " + board.size() + " squares"
+                    + (pending > 0 ? " (+" + pending + " added after turn " + Game.EXPANSION_TURN + ", twist T3)" : "")
+                    + ", " + cards.size() + " cards. Twists: T1 Reverse, T3 Expansion, T7 Recall. Seed: " + seed
                     + (seedGiven ? "" : "  (replay this game with --seed " + seed + ")"));
             addPlayers(game, playerList, in);
             System.out.println("Log file: " + logPath);

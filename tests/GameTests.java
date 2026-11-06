@@ -6,7 +6,8 @@ import java.util.Random;
  * Uses scripted dice and unshuffled decks so every expected log line is known.
  * Uses only ArrayList and Random from java.util, like the game code.
  * Run: java -cp bin;tests-bin GameTests <test-board> <board> <cards>
- * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14, 01.15 and 01.22 (Claude).
+ * AI log: Conversation 01, Prompt 01.13, updated in Prompts 01.14, 01.15 and 01.22;
+ * twist tests (T1, T3, T7) added in Conversation 03, Prompt 03.02 (Claude).
  */
 public class GameTests {
     static int pass = 0, fail = 0;
@@ -84,6 +85,12 @@ public class GameTests {
         scenarioRanking();
         scenarioLoaderErrors();
         boardView();
+        twistQueueMethods();
+        twistT1Reverse();
+        twistT7Recall();
+        twistT3Expansion();
+        twistT3LoaderErrors();
+        twistCardMovesAvoidCardSquares();
         determinismAndFuzz();
         System.out.println();
         System.out.println("RESULT: " + pass + " passed, " + fail + " failed");
@@ -234,7 +241,8 @@ public class GameTests {
     static void scenarioRealBoardCards() throws Exception {
         Board b = FileLoader.loadBoard(BOARD);
         ArrayList<Card> all = FileLoader.loadCards(CARDS, b);
-        check("Real files: 24 squares, 20 cards", b.size() == 24 && all.size() == 20, b.size() + " " + all.size());
+        check("Real files: 24 squares (+3 EXPAND), 24 cards", b.size() == 24 && all.size() == 24
+                && b.getPendingExpansions().size() == 3, b.size() + " " + all.size());
         Card c3 = null, k9 = null;
         for (Card c : all) { if (c.getId().equals("C3")) c3 = c; if (c.getId().equals("K9")) k9 = c; }
         Game g = game(BOARD, cards(c3), NEVER, new Integer[]{1, 2}, "A", "B");
@@ -359,6 +367,215 @@ public class GameTests {
                 report.contains("1.") && report.contains("net worth 1500  =  cash 1300 + property 200")
                 && report.contains("Properties (1): Metro Red Line"), report);
         check("Narration of a log line", plain.narrate("RENT|Sara|Omar|12|1318|1252", g).equals("Sara paid 12 rent to Omar (cash 1318)"), "");
+    }
+
+    // ================================================================ twists
+
+    static <T> String q(LinkedQueue<T> queue) { return contents(queue).toString(); }
+
+    static void twistQueueMethods() {
+        LinkedQueue<Integer> a = new LinkedQueue<>();
+        for (int i = 1; i <= 5; i++) a.enqueue(i);
+        QueueTwists.reverse(a);
+        check("T1 reverse(1..5) = 5,4,3,2,1", q(a).equals("[5, 4, 3, 2, 1]") && a.size() == 5, q(a));
+        LinkedQueue<Integer> e = new LinkedQueue<>();
+        QueueTwists.reverse(e);
+        check("T1 reverse(empty) stays empty", e.isEmpty(), "");
+        LinkedQueue<Integer> one = new LinkedQueue<>(); one.enqueue(7);
+        QueueTwists.reverse(one);
+        check("T1 reverse(single) unchanged", q(one).equals("[7]"), q(one));
+        LinkedQueue<Integer> r = new LinkedQueue<>();
+        for (int i = 1; i <= 5; i++) r.enqueue(i);
+        QueueTwists.rotate(r, 2);
+        check("T7 rotate(1..5, 2) = 3,4,5,1,2", q(r).equals("[3, 4, 5, 1, 2]"), q(r));
+        QueueTwists.rotate(r, 0);
+        check("T7 rotate(q, 0) unchanged", q(r).equals("[3, 4, 5, 1, 2]"), q(r));
+        QueueTwists.rotate(r, 5);
+        check("T7 rotate by size() is a full turn", q(r).equals("[3, 4, 5, 1, 2]"), q(r));
+        r.enqueue(6);
+        check("Queue still FIFO after reverse/rotate (rear pointer intact)", q(r).equals("[3, 4, 5, 1, 2, 6]") && r.size() == 6, q(r));
+    }
+
+    // Brief 8.2 (T1): A draws REVERSE while the queue holds B, C, D. Who plays the next four turns?
+    static void twistT1Reverse() throws Exception {
+        Game g = game(TEST_BOARD, cards(ch("R1", CardEffect.REVERSE, "")), NEVER,
+                new Integer[]{1, 2, 2, 3, 2, 3, 2, 3, 2, 3}, "A", "B", "C", "D");
+        g.playOneTurn();
+        eqLines("T1 REVERSE: CARD, REVERSE, then ORDER of the queue after reversal", g.getLogger().getLines(),
+                "TURN|1|A", "ROLL|A|1|2", "MOVE|A|GO|Chance", "CARD|A|R1", "REVERSE|A", "ORDER|D|C|B");
+        check("T1 8.2: queue after A's turn is D, C, B, A", names(g.getTurnQueue()).equals(list("D", "C", "B", "A")), names(g.getTurnQueue()).toString());
+        g.playOneTurn(); g.playOneTurn(); g.playOneTurn(); g.playOneTurn();
+        ArrayList<String> turns = new ArrayList<>();
+        for (String l : g.getLogger().getLines()) if (l.startsWith("TURN|") && !l.equals("TURN|1|A")) turns.add(l);
+        check("T1 8.2: the next four turns are D, C, B, A", turns.equals(list("TURN|2|D", "TURN|3|C", "TURN|4|B", "TURN|5|A")), turns.toString());
+        ArrayList<Card> deck = contents(g.getChance());
+        check("T1 REVERSE card returns to the back of its deck", deck.size() == 1 && deck.get(0).getId().equals("R1"), deck.toString());
+
+        // two players: reversing a one-player queue changes nothing, ORDER still printed
+        Game g2 = game(TEST_BOARD, cards(ch("R1", CardEffect.REVERSE, "")), NEVER, new Integer[]{1, 2}, "A", "B");
+        g2.playOneTurn();
+        eqLines("T1 with two players: ORDER lists the one waiting player", g2.getLogger().getLines(),
+                "TURN|1|A", "ROLL|A|1|2", "MOVE|A|GO|Chance", "CARD|A|R1", "REVERSE|A", "ORDER|B");
+
+        // REVERSE before PAY_EACH: payments follow the new queue order
+        Game g3 = game(TEST_BOARD, cards(ch("R1", CardEffect.REVERSE, ""), cm("K2", CardEffect.PAY_EACH, "10")), NEVER,
+                new Integer[]{1, 2, 1, 2}, "A", "B", "C");
+        g3.playOneTurn();                                         // queue now C, B, A
+        g3.getPlayers().get(2).setPosition(at(g3, "Tax"));
+        g3.playOneTurn();                                         // C: Tax + 3 -> Community
+        ArrayList<String> l3 = g3.getLogger().getLines();
+        check("T1 then PAY_EACH: C pays in the reversed queue order (B, then A)",
+                l3.contains("CASH|B|+10|1510") && l3.indexOf("CASH|B|+10|1510") < l3.indexOf("CASH|A|+10|1510") && l3.contains("TURN|2|C"), l3.toString());
+    }
+
+    static void twistT7Recall() throws Exception {
+        Card rc = ch("RC", CardEffect.RECALL, "");
+        Card c1 = ch("C1", CardEffect.COLLECT, "1"), c2 = ch("C2", CardEffect.COLLECT, "2"), c3 = ch("C3", CardEffect.COLLECT, "3"),
+             c4 = ch("C4", CardEffect.COLLECT, "4"), c5 = ch("C5", CardEffect.COLLECT, "5");
+        Game g = game(TEST_BOARD, cards(rc, c1, c2, c3, c4, c5), NEVER, new Integer[]{1, 2}, "A", "B");
+        g.playOneTurn();
+        eqLines("T7 RECALL: CARD, then RECALL with the three cards now at the front", g.getLogger().getLines(),
+                "TURN|1|A", "ROLL|A|1|2", "MOVE|A|GO|Chance", "CARD|A|RC", "RECALL|CHANCE|C3|C4|C5");
+        check("T7 deck after RECALL: C3, C4, C5, C1, C2, then RC at the back",
+                contents(g.getChance()).equals(list(c3, c4, c5, c1, c2, rc)), contents(g.getChance()).toString());
+
+        Game g2 = game(TEST_BOARD, cards(rc, c1, c2, c3), NEVER, new Integer[]{1, 2}, "A", "B");
+        g2.playOneTurn();
+        eqLines("T7 with 3 other cards: nothing changes, no RECALL line", g2.getLogger().getLines(),
+                "TURN|1|A", "ROLL|A|1|2", "MOVE|A|GO|Chance", "CARD|A|RC");
+        check("T7 with 3 other cards: deck C1, C2, C3, RC", contents(g2.getChance()).equals(list(c1, c2, c3, rc)), contents(g2.getChance()).toString());
+
+        // 4 other cards, one of them held by a player as JAIL_FREE: only 3 left in the deck -> no change
+        Card jf = ch("JF", CardEffect.JAIL_FREE, "");
+        Game g3 = game(TEST_BOARD, cards(rc, c1, c2, c3), NEVER, new Integer[]{1, 2}, "A", "B");
+        g3.getPlayers().get(1).addJailFreeCard(jf);
+        g3.playOneTurn();
+        check("T7 counts only cards in the deck (held JAIL_FREE cards are not)", !g3.getLogger().getLines().toString().contains("RECALL|"), "");
+
+        // exactly 4 other cards: rotate 1 -> last three at the front
+        Game g4 = game(TEST_BOARD, cards(rc, c1, c2, c3, c4), NEVER, new Integer[]{1, 2}, "A", "B");
+        g4.playOneTurn();
+        check("T7 with 4 other cards: RECALL|CHANCE|C2|C3|C4", g4.getLogger().getLines().contains("RECALL|CHANCE|C2|C3|C4")
+                && contents(g4.getChance()).equals(list(c2, c3, c4, c1, rc)), contents(g4.getChance()).toString());
+    }
+
+    static void twistT3Expansion() throws Exception {
+        Game g = game(BOARD, cards(), NEVER, new Integer[]{}, "Sara", "Omar", "Ali");
+        Board b = g.getBoard();
+        Player sara = g.getPlayers().get(0);
+        own(g, sara, "Corniche Road"); own(g, sara, "Al Bateen");
+        PropertySquare corniche = (PropertySquare) at(g, "Corniche Road").data;
+        int rentBefore = corniche.rent(b);
+        Node<Square> lastBefore = b.getGo().prev;
+        for (int i = 0; i < 19; i++) g.playOneTurn();
+        check("T3: no expansion before the end of turn 20", b.size() == 24 && !g.getLogger().getLines().toString().contains("EXPAND|"), "");
+        int before = g.getLogger().getLines().size();
+        g.playOneTurn();
+        ArrayList<String> t20 = new ArrayList<>(g.getLogger().getLines().subList(before, g.getLogger().getLines().size()));
+        ArrayList<String> exp = new ArrayList<>();
+        for (String l : t20) if (l.startsWith("EXPAND|")) exp.add(l);
+        check("T3: three EXPAND lines in file order at the end of turn 20",
+                exp.equals(list("EXPAND|Al Mina|Al Bateen", "EXPAND|Abu Dhabi Airport Express|Metro Green Line", "EXPAND|Lulu Island|Hudayriyat Island"))
+                && t20.get(t20.size() - 1).startsWith("EXPAND|") && t20.get(0).equals("TURN|20|Omar"), t20.toString());
+        check("T3: board now has 27 squares, pending queue empty", b.size() == 27 && b.getPendingExpansions().isEmpty(), String.valueOf(b.size()));
+        Game gm = game(BOARD, cards(), NEVER, new Integer[]{}, "A", "B", "C");
+        Player pa = gm.getPlayers().get(0), pb = gm.getPlayers().get(1), pc = gm.getPlayers().get(2);
+        Node<Square> na = at(gm, "Al Bateen"), nb = at(gm, "Hudayriyat Island"), nc = at(gm, "Municipality Fee");
+        pa.setPosition(na); pb.setPosition(nb); pc.setPosition(nc);
+        int cashA = pa.getCash();
+        gm.applyExpansions();
+        check("T3: players are not moved by the insertion (same nodes, no salary)", pa.getPosition() == na && pb.getPosition() == nb
+                && pc.getPosition() == nc && pa.getCash() == cashA && na.next.data.getName().equals("Al Mina") && nc.prev.data.getName().equals("Al Mina"), "");
+        Node<Square> bateen = at(g, "Al Bateen"), mina = at(g, "Al Mina"), lulu = at(g, "Lulu Island");
+        check("T3: Al Mina linked both ways between Al Bateen and Municipality Fee",
+                bateen.next == mina && mina.prev == bateen && mina.next.data.getName().equals("Municipality Fee") && mina.next.prev == mina, "");
+        check("T3: Lulu Island inserted after the last square: Hudayriyat.next = Lulu, Lulu.next = GO, GO.prev = Lulu",
+                lastBefore.next == lulu && lulu.prev == lastBefore && lulu.next == b.getGo() && b.getGo().prev == lulu && b.getHead() == b.getGo(), "");
+        check("T3: Airport Express after Metro Green Line, before Free Parking",
+                at(g, "Metro Green Line").next.data.getName().equals("Abu Dhabi Airport Express")
+                && at(g, "Abu Dhabi Airport Express").next.data.getName().equals("Free Parking"), "");
+        check("T3: BLUE group now has 3 squares - Sara's doubled rent drops back to base",
+                rentBefore == 8 && corniche.rent(b) == 4, rentBefore + " -> " + corniche.rent(b));
+        // salary still paid at GO across the new last square
+        Node<Square> mid = b.step(lastBefore, 1, sara);
+        int cash = sara.getCash();
+        Node<Square> land = b.step(lastBefore, 2, sara);
+        check("T3: Hudayriyat +1 = Lulu Island (no salary), +2 = GO (salary)", mid == lulu && land == b.getGo() && sara.getCash() == cash + 200, "");
+        g.applyExpansions();
+        check("T3: applying again does nothing (queue already empty)", b.size() == 27, "");
+        // max-turns 20: EXPAND lines come before END
+        Game g2 = new Game(FileLoader.loadBoard(BOARD), new ArrayList<>(), new Random(5), false,
+                new Dice(new Random(5)), new GameLogger(null, false), NEVER, 20);
+        g2.addPlayer("A"); g2.addPlayer("B");
+        g2.play();
+        ArrayList<String> l2 = g2.getLogger().getLines();
+        check("T3 with --max-turns 20: EXPAND lines, then END|MAX_TURNS", l2.indexOf("END|MAX_TURNS") == l2.indexOf("EXPAND|Lulu Island|Hudayriyat Island") + 1, "");
+        BoardView plain = new BoardView(false, true, false);
+        String[] rows = plain.build(g).split(System.lineSeparator());
+        check("T3: board view redraws the 27-square ring (8 x 8, 41 rows x 113 columns)", rows.length == 41 && rows[0].length() == 113
+                && plain.build(g).contains("Lulu Island") && plain.build(g).contains("Al Mina"), rows.length + "x" + rows[0].length());
+        check("Narration of the twist log lines", plain.narrate("EXPAND|Al Mina|Al Bateen", g).contains("Al Mina is built after Al Bateen")
+                && plain.narrate("ORDER|D|C|B", g).equals("New turn order: D > C > B")
+                && plain.narrate("RECALL|CHANCE|C3|C4|C5", g).contains("C3, C4, C5"), "");
+    }
+
+    static String loadError(String... boardLines) throws Exception {
+        java.io.File tmp = java.io.File.createTempFile("exp", ".txt");
+        java.io.PrintWriter w = new java.io.PrintWriter(tmp);
+        java.io.BufferedReader r = new java.io.BufferedReader(new java.io.FileReader(TEST_BOARD));
+        String line;
+        while ((line = r.readLine()) != null) w.println(line);
+        r.close();
+        for (String l : boardLines) w.println(l);
+        w.close();
+        String msg = "OK";
+        try {
+            Board b = FileLoader.loadBoard(tmp.getPath());
+            msg = "OK " + b.getPendingExpansions().size();
+        } catch (IllegalArgumentException e) { msg = e.getMessage(); }
+        tmp.delete();
+        return msg;
+    }
+
+    static void twistT3LoaderErrors() throws Exception {
+        check("T3 loader: EXPAND may name a square added by an earlier EXPAND line",
+                loadError("EXPAND|P1|PROPERTY|P1b|BROWN|60|2", "EXPAND|P1b|TAX|Fee2|20").equals("OK 2"), loadError("EXPAND|P1|PROPERTY|P1b|BROWN|60|2", "EXPAND|P1b|TAX|Fee2|20"));
+        check("T3 loader: unknown anchor square rejected", loadError("EXPAND|Nowhere|TAX|Fee2|20").contains("not on the board"), "");
+        check("T3 loader: EXPAND cannot add a second JAIL", loadError("EXPAND|P1|JAIL|Jail2").contains("cannot add a JAIL"), "");
+        check("T3 loader: duplicate new square name rejected", loadError("EXPAND|P1|TAX|Tax|20").contains("duplicate"), "");
+        check("T3 loader: a normal square after an EXPAND line is rejected",
+                loadError("EXPAND|P1|TAX|Fee2|20", "TAX|Fee3|10").contains("must come after"), "");
+        check("T3 loader: more than 28 squares in total rejected", loadError("EXPAND|P1|TAX|E1|1", "EXPAND|P1|TAX|E2|1", "EXPAND|P1|TAX|E3|1",
+                "EXPAND|P1|TAX|E4|1", "EXPAND|P1|TAX|E5|1", "EXPAND|P1|TAX|E6|1", "EXPAND|P1|TAX|E7|1", "EXPAND|P1|TAX|E8|1",
+                "EXPAND|P1|TAX|E9|1").contains("exceed 28"), "");
+    }
+
+    // Design note D9: no card move ends on a CHANCE or COMMUNITY square, before and after T3 (landOn depth <= 2).
+    static void twistCardMovesAvoidCardSquares() throws Exception {
+        Game g = game(BOARD, cards(), NEVER, new Integer[]{}, "A", "B");
+        ArrayList<Card> all = FileLoader.loadCards(CARDS, g.getBoard());
+        String before = cardSquareProblem(g.getBoard(), all);
+        g.applyExpansions();
+        String after = cardSquareProblem(g.getBoard(), all);
+        check("D9: no card move ends on a card square (24-square board)", before == null, String.valueOf(before));
+        check("D9: no card move ends on a card square (27 squares after T3)", after == null, String.valueOf(after));
+    }
+
+    static String cardSquareProblem(Board b, ArrayList<Card> all) {
+        Node<Square> n = b.getHead();
+        for (int i = 0; i < b.size(); i++, n = n.next) {
+            if (!(n.data instanceof CardSquare)) continue;
+            DeckType deck = ((CardSquare) n.data).getDeck();
+            for (Card c : all) {
+                if (c.getDeck() != deck) continue;
+                Node<Square> dest = null;
+                if (c.getEffect() == CardEffect.MOVE_BY) dest = b.step(n, c.getAmount(), null);
+                if (c.getEffect() == CardEffect.MOVE_TO) dest = b.findByName(b.getHead(), c.getArgument(), b.size());
+                if (c.getEffect() == CardEffect.NEAREST) dest = b.findNearest(n.next, c.getArgument(), b.size());
+                if (dest != null && dest.data instanceof CardSquare) return c.getId() + " from " + n.data.getName() + " -> " + dest.data.getName();
+            }
+        }
+        return null;
     }
 
     static void determinismAndFuzz() throws Exception {

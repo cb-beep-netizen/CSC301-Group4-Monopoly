@@ -1,5 +1,5 @@
 @echo off
-rem CSC301 Monopoly - build, run the 44 scenario tests and the constraint check.
+rem CSC301 Monopoly - build, run the 93 tests (core + twists T1/T3/T7) and the constraint check.
 cd /d "%~dp0"
 set "JAVA=java"
 set "JAVAC=javac"

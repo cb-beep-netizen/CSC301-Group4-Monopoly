@@ -15,7 +15,8 @@ import java.util.ArrayList;
  * VS Code, and the classic Windows 10/11 console once enableWindowsColour()
  * has run); otherwise the same screen is drawn without colour. Each player has
  * a colour; squares they own are tinted with it and show their name.
- * AI log: Conversation 01, Prompt 01.14, updated in Prompts 01.15 and 01.22 (Claude). Reviewed and understood by: ______
+ * AI log: Conversation 01, Prompt 01.14, updated in Prompts 01.15 and 01.22;
+ * twist log lines narrated in Conversation 03, Prompt 03.02 (Claude). Reviewed and understood by: ______
  */
 public class BoardView {
     private static final int CW = 13;   // inner width of a square cell
@@ -565,6 +566,16 @@ public class BoardView {
             case "BANKRUPT": return f[1] + " is BANKRUPT (creditor: " + f[2] + ")";
             case "END": return "Game over: " + (f[1].equals("LAST_PLAYER") ? "one player left" : "turn limit reached");
             case "RANK": return "#" + f[1] + " " + f[2] + " - net worth " + f[3];
+            case "REVERSE": return f[1] + " reversed the turn order (twist T1)";
+            case "ORDER": {
+                StringBuilder order = new StringBuilder("New turn order: ");
+                for (int i = 1; i < f.length; i++) {
+                    order.append(i > 1 ? " > " : "").append(f[i]);
+                }
+                return order.toString();
+            }
+            case "EXPAND": return "The board grows: " + f[1] + " is built after " + f[2] + " (twist T3)";
+            case "RECALL": return f[1] + " deck recalled: " + f[2] + ", " + f[3] + ", " + f[4] + " are now on top (twist T7)";
             default: return line;
         }
     }

@@ -61,10 +61,12 @@ OUTPUT
   game-log.txt). With --text the same lines are also printed on the console.
 
 FILES
-  code\*.java             game source (25 files, incl. BoardView)
-  code\data\board.txt     our 24-square board (Appendix B.1 format)
-  code\data\cards.txt     our 10 Chance + 10 Community cards (Appendix B.2)
-  tests\GameTests.java    53 tests incl. the brief 8.2 scenarios and the board view
+  code\*.java             game source (27 files, incl. BoardView, QueueTwists, Expansion)
+  code\data\board.txt     our 24-square board + 3 EXPAND lines (Appendix B.1 format)
+  code\data\cards.txt     our 12 Chance + 12 Community cards (Appendix B.2),
+                          incl. REVERSE and RECALL in each deck
+  tests\GameTests.java    93 tests incl. the brief 8.2 scenarios (also T1),
+                          the twists and the board view
   tests\check_constraints.py  static check: allowed imports, no banned
                           collections, required methods recursive with no loops
   run-tests.bat           builds and runs both
@@ -77,11 +79,42 @@ DATA STRUCTURES (brief Section 4)
   ArrayList  owned squares, players for ranking, card list before shuffling
   Recursion  step, takeTurn, landOn, transitRent, netWorth, ownsGroup,
              findByName, findNearest - no for/while/do loops
+             Twists: QueueTwists.reverse (T1), QueueTwists.rotate (T7),
+             Game.applyExpansions (T3)
 
-TWISTS IMPLEMENTED
-  None yet - the group's three assigned twists are being confirmed with the
-  instructor. The design leaves extension points (new Square subclass, new
-  CardEffect value).
+TWISTS IMPLEMENTED (brief Appendix A) - Group 4: T1, T3, T7
+  T1 Reverse    Card effect REVERSE (cards C11, K11). The waiting players in
+                the turn queue are reversed by the recursive
+                QueueTwists.reverse(LinkedQueue<T>), which uses only enqueue,
+                dequeue and isEmpty. The current player is not in the queue
+                during the turn and joins the back as usual afterwards.
+                Log: REVERSE|<player> then ORDER|<p1>|<p2>|... (front first).
+                Example: A draws REVERSE, queue B,C,D -> D,C,B; next four
+                turns are D, C, B, A.
+  T3 Expansion  The 3 EXPAND lines at the end of board.txt are applied at the
+                end of turn 20, in file order: Al Mina after Al Bateen (BLUE
+                becomes a 3-square group), Abu Dhabi Airport Express after
+                Metro Green Line (4th TRANSIT), Lulu Island after Hudayriyat
+                Island (new last square: its next is GO). Each insertion is
+                CircularDoublyLinkedList.insertAfter (O(1)); players do not
+                move. The board grows from 24 to 27 squares and the board view
+                redraws as an 8 x 8 ring (widen the window to 115 columns).
+                Log: EXPAND|<new square>|<after square>.
+  T7 Recall     Card effect RECALL (cards C12, K12). After RECALL is drawn,
+                the last 3 cards of the same deck move to the front in their
+                order, by the recursive QueueTwists.rotate(q, n - 3); RECALL
+                then goes to the back. With 3 or fewer other cards in the deck
+                nothing changes and no RECALL line is printed.
+                Log: RECALL|<deck>|<id1>|<id2>|<id3> (front first).
+  Demo of all three twists in one game (same log every time):
+    run.bat --players Sara,Omar,Ali,Huda --seed 73 --auto --text --max-turns 24
+    turn 3  Ali draws C12 RECALL   -> RECALL|CHANCE|C3|C1|C2
+    turn 8  Huda draws K11 REVERSE -> ORDER|Ali|Omar|Sara (turns 9-12: Ali,
+            Omar, Sara, Huda)
+    turn 20 end -> EXPAND x3, board grows to 27 squares
+  Full rules, pointer diagrams and design decisions: the design document
+  (CSC301_Group4_Monopoly_Data_Structures_Report.pdf, Section 3) and
+  design\Core-Design-Notes.txt (D22-D27).
 
 BONUS FUNCTIONALITIES (planned, Section 11)
   B4 live pointer visualiser (--debug) and language toggle (--lang en|fr|ar).
@@ -92,4 +125,4 @@ GITHUB
   files, never deletes teammates' files; local-only files are in .gitignore).
 
 AI USE
-  All AI use is logged in AI-Usage-log.txt (Claude, Conversation 01).
+  All AI use is logged in AI-Usage-log.txt (Claude, Conversations 01-03).

@@ -7,7 +7,11 @@ import java.util.Random;
  * Implements the rules of brief Section 3 and writes the Appendix C log.
  * Required recursive methods here: takeTurn and landOn (Section 5.1). Every
  * helper they call is recursive or O(1).
- * AI log: Conversation 01, Prompt 01.13, updated in Prompt 01.14 (Claude). Reviewed and understood by: ______
+ * Twists (Appendix A): T1 Reverse (REVERSE card, QueueTwists.reverse on the
+ * turn queue), T3 Expansion (EXPAND lines inserted at the end of turn 20),
+ * T7 Recall (RECALL card, QueueTwists.rotate on the card's deck).
+ * AI log: Conversation 01, Prompt 01.13, updated in Prompt 01.14 (Claude);
+ * twists added in Conversation 03, Prompt 03.02 (Claude). Reviewed and understood by: ______
  */
 public class Game {
     public static final int DEFAULT_MAX_TURNS = 60;
@@ -15,6 +19,10 @@ public class Game {
     public static final int MAX_JAIL_ATTEMPTS = 3;
     public static final int MIN_PLAYERS = 2;
     public static final int MAX_PLAYERS = 6;
+    /** T3: EXPAND lines are applied at the end of this turn. */
+    public static final int EXPANSION_TURN = 20;
+    /** T7: number of cards RECALL brings from the back of the deck to the front. */
+    public static final int RECALL_CARDS = 3;
 
     private final Board board;
     private final LinkedQueue<Player> turnQueue = new LinkedQueue<>();
@@ -110,6 +118,9 @@ public class Game {
         }
         if (!p.isBankrupt()) {
             turnQueue.enqueue(p);
+        }
+        if (turnCount == EXPANSION_TURN) {
+            applyExpansions();      // T3: end of turn 20, before the end-of-game check
         }
         if (turnQueue.size() <= 1) {
             endReason = "LAST_PLAYER";
@@ -349,10 +360,89 @@ public class Game {
             case GO_TO_JAIL:
                 sendToJail(p);
                 break;
+            case REVERSE:                       // T1
+                reverseTurnOrder(p);
+                break;
+            case RECALL:                        // T7
+                recall(deck, card.getDeck());
+                break;
             default:
                 break;
         }
         deck.enqueue(card);
+    }
+
+    // -------------------------------------------------------------- twists
+
+    /**
+     * T1 Reverse. The current player p is not in the queue during the turn, so
+     * only the waiting players are reversed; p is enqueued at the back as usual
+     * when the turn ends (playOneTurn). Logs REVERSE|p, then ORDER|... with the
+     * queue after reversal, front first.
+     * Example (brief 8.2): A draws REVERSE while the queue is B, C, D. The queue
+     * becomes D, C, B; A joins the back, so the next four turns are D, C, B, A.
+     */
+    private void reverseTurnOrder(Player p) {
+        logger.log("REVERSE", p.getName());
+        QueueTwists.reverse(turnQueue);
+        ArrayList<Player> order = new ArrayList<>();
+        turnQueue.copyInto(order);              // one rotation, order unchanged
+        String[] fields = new String[order.size() + 1];
+        fields[0] = "ORDER";
+        fillNames(order, 0, fields);
+        logger.log(fields);
+    }
+
+    /** Recursive: fields[i + 1] = name of order[i]. Base case: i == size. */
+    private void fillNames(ArrayList<Player> order, int i, String[] fields) {
+        if (i >= order.size()) {
+            return;
+        }
+        fields[i + 1] = order.get(i).getName();
+        fillNames(order, i + 1, fields);
+    }
+
+    /**
+     * T7 Recall. Called after the RECALL card has been dequeued, so deck.size()
+     * counts the other cards only (held JAIL_FREE cards are not in the deck).
+     * With n cards left and n > 3, rotating n - 3 cards from the front to the
+     * back leaves the last 3 cards at the front, in their original order. The
+     * RECALL card then goes to the back as usual (applyCard).
+     * If n <= 3 nothing changes and no RECALL line is printed (design D25).
+     * Logs RECALL|<deck>|<id1>|<id2>|<id3>, the three cards now at the front.
+     */
+    private void recall(LinkedQueue<Card> deck, DeckType type) {
+        int n = deck.size();
+        if (n <= RECALL_CARDS) {
+            return;
+        }
+        QueueTwists.rotate(deck, n - RECALL_CARDS);
+        ArrayList<Card> cards = new ArrayList<>();
+        deck.copyInto(cards);                   // one rotation, order unchanged
+        logger.log("RECALL", type.name(), cards.get(0).getId(), cards.get(1).getId(), cards.get(2).getId());
+    }
+
+    /**
+     * T3 Expansion, at the end of turn 20. Recursive over the pending queue
+     * (file order): dequeue one EXPAND line, find the named square with the
+     * recursive findByName, insert the new square directly after it, log
+     * EXPAND|<new>|<after>. A later EXPAND line may name a square added by an
+     * earlier one. Players are not moved.
+     * Base case: no pending expansions. Terminates: one dequeue per call.
+     */
+    public void applyExpansions() {
+        LinkedQueue<Expansion> pending = board.getPendingExpansions();
+        if (pending.isEmpty()) {
+            return;
+        }
+        Expansion e = pending.dequeue();
+        Node<Square> after = board.findByName(board.getHead(), e.getAfterName(), board.size());
+        if (after == null) {
+            throw new IllegalStateException("EXPAND: square '" + e.getAfterName() + "' is not on the board");
+        }
+        board.insertAfter(after, e.getSquare());
+        logger.log("EXPAND", e.getSquare().getName(), e.getAfterName());
+        applyExpansions();
     }
 
     /** The other active players in current turn-queue order (the current player is not queued). */

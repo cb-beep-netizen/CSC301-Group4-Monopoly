@@ -9,8 +9,11 @@ import java.util.ArrayList;
  * (Appendix B). Lines starting with # and blank lines are ignored. Every error
  * names the file and line number.
  * Data flow: file -> Square objects -> CircularDoublyLinkedList (addLast);
+ *            EXPAND lines (T3) -> Expansion objects -> Board's LinkedQueue
+ *            (inserted at the end of turn 20, not part of the starting board);
  *            file -> Card objects -> ArrayList (shuffled later, then queued).
- * AI log: Conversation 01, Prompt 01.13 (Claude). Reviewed and understood by: ______
+ * AI log: Conversation 01, Prompt 01.13; EXPAND, REVERSE and RECALL added in
+ * Conversation 03, Prompt 03.02 (Claude). Reviewed and understood by: ______
  */
 public class FileLoader {
     public static final int MIN_SQUARES = 20;
@@ -63,6 +66,7 @@ public class FileLoader {
     public static Board loadBoard(String path) throws IOException {
         CircularDoublyLinkedList<Square> list = new CircularDoublyLinkedList<>();
         ArrayList<String> names = new ArrayList<>();
+        ArrayList<Expansion> expansions = new ArrayList<>();
         int go = 0, jail = 0, goToJail = 0;
         ArrayList<String[]> lines = readLines(path);
         for (int i = 0; i < lines.size(); i++) {
@@ -70,68 +74,111 @@ public class FileLoader {
             String where = path + " line " + f[0];
             String type = f[1].toUpperCase();
             if (type.equals("EXPAND")) {
-                // EXPAND lines belong to twist T3 (not implemented yet); not part of the starting board.
-                System.err.println("Note: " + where + ": EXPAND line ignored (twist T3 not implemented).");
+                // T3: EXPAND|<existing square>|<full square definition>
+                if (f.length < 4 || f[2].isEmpty()) {
+                    throw new IllegalArgumentException(where + ": expected EXPAND|after square|square definition");
+                }
+                String after = f[2];
+                if (!names.contains(after)) {
+                    throw new IllegalArgumentException(where + ": EXPAND names '" + after
+                            + "', which is not on the board (or not added by an earlier EXPAND line)");
+                }
+                String[] def = new String[f.length - 2];   // [line no, type, fields...]
+                def[0] = f[0];
+                for (int k = 3; k < f.length; k++) {
+                    def[k - 2] = f[k];
+                }
+                String newType = def[1].toUpperCase();
+                if (newType.equals("GO") || newType.equals("JAIL") || newType.equals("GO_TO_JAIL") || newType.equals("EXPAND")) {
+                    throw new IllegalArgumentException(where + ": EXPAND cannot add a " + newType
+                            + " square (the board needs exactly one GO, JAIL and GO_TO_JAIL)");
+                }
+                Square s = parseSquare(def, where, names);
+                expansions.add(new Expansion(after, s));
+                names.add(s.getName());
                 continue;
             }
-            if (f.length < 3 || f[2].isEmpty()) {
-                throw new IllegalArgumentException(where + ": missing square name");
+            if (!expansions.isEmpty()) {
+                throw new IllegalArgumentException(where + ": EXPAND lines must come after every square of the starting board");
             }
-            String name = f[2];
-            if (names.contains(name)) {
-                throw new IllegalArgumentException(where + ": duplicate square name '" + name + "'");
-            }
-            Square s;
-            switch (type) {
-                case "GO":
-                    need(f, 2, where, "GO|name");
-                    s = new CornerSquare(name, CornerType.GO); go++; break;
-                case "JAIL":
-                    need(f, 2, where, "JAIL|name");
-                    s = new CornerSquare(name, CornerType.JAIL); jail++; break;
-                case "FREE":
-                    need(f, 2, where, "FREE|name");
-                    s = new CornerSquare(name, CornerType.FREE); break;
-                case "GO_TO_JAIL":
-                    need(f, 2, where, "GO_TO_JAIL|name");
-                    s = new CornerSquare(name, CornerType.GO_TO_JAIL); goToJail++; break;
-                case "CHANCE":
-                    need(f, 2, where, "CHANCE|name");
-                    s = new CardSquare(name, DeckType.CHANCE); break;
-                case "COMMUNITY":
-                    need(f, 2, where, "COMMUNITY|name");
-                    s = new CardSquare(name, DeckType.COMMUNITY); break;
-                case "PROPERTY":
-                    need(f, 5, where, "PROPERTY|name|color|price|rent");
-                    s = new PropertySquare(name, f[3].toUpperCase(), toInt(f[4], where), toInt(f[5], where)); break;
-                case "TRANSIT":
-                    need(f, 3, where, "TRANSIT|name|price");
-                    s = new TransitSquare(name, toInt(f[3], where)); break;
-                case "TAX":
-                    need(f, 3, where, "TAX|name|amount");
-                    s = new TaxSquare(name, toInt(f[3], where)); break;
-                case "EARTHQUAKE":
-                case "MIRAGE":
-                case "PORTAL":
-                    throw new IllegalArgumentException(where + ": square type " + type + " needs a twist that is not implemented yet");
-                default:
-                    throw new IllegalArgumentException(where + ": unknown square type '" + f[1] + "'");
-            }
+            Square s = parseSquare(f, where, names);
             if (list.isEmpty() && !type.equals("GO")) {
                 throw new IllegalArgumentException(where + ": the first square must be GO");
             }
+            if (type.equals("GO")) go++;
+            if (type.equals("JAIL")) jail++;
+            if (type.equals("GO_TO_JAIL")) goToJail++;
             list.addLast(s);
-            names.add(name);
+            names.add(s.getName());
         }
         if (list.size() < MIN_SQUARES || list.size() > MAX_SQUARES) {
             throw new IllegalArgumentException(path + ": board has " + list.size() + " squares; it must have "
                     + MIN_SQUARES + " to " + MAX_SQUARES);
         }
+        if (list.size() + expansions.size() > MAX_SQUARES) {
+            throw new IllegalArgumentException(path + ": " + list.size() + " squares + " + expansions.size()
+                    + " EXPAND lines would exceed " + MAX_SQUARES + " squares");
+        }
         if (go != 1 || jail != 1 || goToJail != 1) {
             throw new IllegalArgumentException(path + ": board needs exactly one GO, one JAIL and one GO_TO_JAIL (found "
                     + go + ", " + jail + ", " + goToJail + ")");
         }
-        return new Board(list);
+        Board board = new Board(list);
+        for (int i = 0; i < expansions.size(); i++) {
+            board.addPendingExpansion(expansions.get(i));   // file order = queue order
+        }
+        return board;
+    }
+
+    /**
+     * Builds one square from f = [line no, type, name, fields...]. Used for the
+     * starting board and for the square definition inside an EXPAND line.
+     */
+    private static Square parseSquare(String[] f, String where, ArrayList<String> names) {
+        String type = f[1].toUpperCase();
+        if (f.length < 3 || f[2].isEmpty()) {
+            throw new IllegalArgumentException(where + ": missing square name");
+        }
+        String name = f[2];
+        if (names.contains(name)) {
+            throw new IllegalArgumentException(where + ": duplicate square name '" + name + "'");
+        }
+        switch (type) {
+            case "GO":
+                need(f, 2, where, "GO|name");
+                return new CornerSquare(name, CornerType.GO);
+            case "JAIL":
+                need(f, 2, where, "JAIL|name");
+                return new CornerSquare(name, CornerType.JAIL);
+            case "FREE":
+                need(f, 2, where, "FREE|name");
+                return new CornerSquare(name, CornerType.FREE);
+            case "GO_TO_JAIL":
+                need(f, 2, where, "GO_TO_JAIL|name");
+                return new CornerSquare(name, CornerType.GO_TO_JAIL);
+            case "CHANCE":
+                need(f, 2, where, "CHANCE|name");
+                return new CardSquare(name, DeckType.CHANCE);
+            case "COMMUNITY":
+                need(f, 2, where, "COMMUNITY|name");
+                return new CardSquare(name, DeckType.COMMUNITY);
+            case "PROPERTY":
+                need(f, 5, where, "PROPERTY|name|color|price|rent");
+                return new PropertySquare(name, f[3].toUpperCase(), toInt(f[4], where), toInt(f[5], where));
+            case "TRANSIT":
+                need(f, 3, where, "TRANSIT|name|price");
+                return new TransitSquare(name, toInt(f[3], where));
+            case "TAX":
+                need(f, 3, where, "TAX|name|amount");
+                return new TaxSquare(name, toInt(f[3], where));
+            case "EARTHQUAKE":
+            case "MIRAGE":
+            case "PORTAL":
+                throw new IllegalArgumentException(where + ": square type " + type
+                        + " belongs to a twist this group does not implement (our twists: T1, T3, T7)");
+            default:
+                throw new IllegalArgumentException(where + ": unknown square type '" + f[1] + "'");
+        }
     }
 
     /** Card list before shuffling, in file order (brief 4: ArrayList). */
@@ -158,9 +205,6 @@ public class FileLoader {
                 throw new IllegalArgumentException(where + ": card id '" + id + "' is empty or duplicated");
             }
             String effectName = f[4].toUpperCase();
-            if (effectName.equals("REVERSE") || effectName.equals("RECALL")) {
-                throw new IllegalArgumentException(where + ": effect " + effectName + " needs a twist that is not implemented yet");
-            }
             CardEffect effect;
             try {
                 effect = CardEffect.valueOf(effectName);

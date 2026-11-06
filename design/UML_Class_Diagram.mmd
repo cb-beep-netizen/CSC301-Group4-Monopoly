@@ -1,5 +1,5 @@
 ---
-title: CSC301 Monopoly (Capital Circuit) - Class Diagram v3 (as built, core game + board view)
+title: CSC301 Monopoly (Capital Circuit) - Class Diagram v4 (as built, core game + board view + twists T1, T3, T7)
 ---
 classDiagram
 direction TB
@@ -120,12 +120,18 @@ namespace GameEngine {
     +landOnOwnable(Player p, OwnableSquare s) void
     +payTax(Player p, int amount) void
     +drawCard(Player p, DeckType deck) void
+    +applyExpansions() void
+    -reverseTurnOrder(Player p) void
+    -recall(LinkedQueue~Card~ deck, DeckType type) void
     +rank() ArrayList~Player~
   }
   class Board {
     -CircularDoublyLinkedList~Square~ squares
     -Node~Square~ goNode
     -Node~Square~ jailNode
+    -LinkedQueue~Expansion~ pendingExpansions
+    +addPendingExpansion(Expansion e) void
+    +insertAfter(Node~Square~ after, Square s) Node~Square~
     +step(Node~Square~ current, int steps, Player p) Node~Square~
     +ownsGroup(Node~Square~ current, Node~Square~ start, String color, Player p) boolean
     +findByName(Node~Square~ current, String name, int remaining) Node~Square~
@@ -193,6 +199,20 @@ namespace Cards {
     COLLECT_EACH
     GO_TO_JAIL
     JAIL_FREE
+    REVERSE
+    RECALL
+  }
+}
+namespace Twists {
+  class QueueTwists {
+    <<T1 and T7>>
+    +reverse(LinkedQueue~T~ q)$ void
+    +rotate(LinkedQueue~T~ q, int k)$ void
+  }
+  class Expansion {
+    <<T3>>
+    -String afterName
+    -Square square
   }
 }
 namespace Bonus_planned {
@@ -231,6 +251,11 @@ Player o-- "0..*" Square : owned
 Player o-- "0..*" Card : jailFreeCards
 FileLoader ..> Board : builds
 FileLoader ..> Card : builds
+Board o-- "0..*" Expansion : pending (FIFO)
+Expansion --> "1" Square : new square
+FileLoader ..> Expansion : builds
+Game ..> QueueTwists : REVERSE, RECALL
+QueueTwists ..> LinkedQueue : enqueue, dequeue, isEmpty only
 Main ..> FileLoader
 Main ..> Game
 Main ..> BoardView

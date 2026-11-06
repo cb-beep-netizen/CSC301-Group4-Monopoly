@@ -1,10 +1,11 @@
-CSC301 MONOPOLY ("CAPITAL CIRCUIT") - CORE DESIGN NOTES v2          2026-11-01
-Feeds the design document (brief Section 9). Twists deferred; bonus B4 + language.
+CSC301 MONOPOLY ("CAPITAL CIRCUIT") - CORE DESIGN NOTES v3          2026-11-06
+Feeds the design document (brief Section 9). Twists T1, T3, T7 implemented
+(Conversation 03, Prompt 03.02); bonus B4 + language planned.
 
 1. FOLDERS
-   code\            Java source, default package (25 .java files)
-   code\data\       board.txt, cards.txt  (own designs, Appendix B formats)
-   tests\           GameTests.java (53 checks), test-board.txt, check_constraints.py
+   code\            Java source, default package (27 .java files)
+   code\data\       board.txt (+3 EXPAND lines), cards.txt (24 cards incl. twist cards)
+   tests\           GameTests.java (93 checks), test-board.txt, check_constraints.py
    design\          UML_Class_Diagram.(mmd|png|svg) v2 as built, this file
    bin\, tests-bin\ compiled classes (not submitted)
    build.bat / run.bat / run-tests.bat at the project root
@@ -16,6 +17,9 @@ Feeds the design document (brief Section 9). Twists deferred; bonus B4 + languag
                Square > TaxSquare, CardSquare, CornerSquare; enums DeckType, CornerType
    Structures  Node<T>, CircularDoublyLinkedList<T>, LinkedQueue<T> (+ private QNode<T>)
    Cards       Card (id, text, effect, argument, deck), enum CardEffect
+               (+ REVERSE, RECALL)
+   Twists      QueueTwists (static recursive reverse, rotate - T1, T7),
+               Expansion (one EXPAND line - T3); hooks in Game and Board
    Engine      Player, Board, Dice, GameLogger, Game, FileLoader (added), Main,
                BuyDecider interface (added) + ConsoleBuyDecider, AutoBuyDecider
    UI          BoardView (added, Prompt 01.14): console board like the prototype
@@ -38,11 +42,15 @@ Feeds the design document (brief Section 9). Twists deferred; bonus B4 + languag
  D8 Determinism: one seeded Random shared by Dice and Collections.shuffle; decks
     shuffled once at start, CHANCE first then COMMUNITY. Same seed = same game.
  D9 landOn() termination: the card file never moves a player onto a CHANCE or
-    COMMUNITY square (checked by script), so recursion depth <= 2.
+    COMMUNITY square, so recursion depth <= 2. Checked by GameTests
+    (twistCardMovesAvoidCardSquares) on the 24-square board AND on the
+    27-square board after the T3 expansion.
  D10 GameLogger writes only Appendix C lines (to console and game-log.txt).
     Prompts, board display, DebugView and translations never enter the log.
  D11 Extension points for twists: new square = new Square subclass with land();
     new card = new CardEffect value + one case in Game's card handler.
+    Used as planned: T1 and T7 are two CardEffect values + two cases in
+    applyCard; T3 needed no new Square subclass (it reuses insertAfter).
  D12 The 8 mandatory recursive methods contain no for/while/do; any helper they
     call is recursive or O(1). Loops are allowed elsewhere (game loop, file read).
  D13 step(): base case steps == 0 returns current; steps > 0 follows next;
@@ -78,11 +86,55 @@ Feeds the design document (brief Section 9). Twists deferred; bonus B4 + languag
     PAY_EACH / COLLECT_EACH recurse over a queue-order snapshot, the console
     Y/N prompt re-asks recursively.
 
-4. BOARD (24 squares)   GO(0) ... JAIL(6) ... FREE(12) ... GO_TO_JAIL(18)
+4a. TWISTS (Group 4: T1 Reverse, T3 Expansion, T7 Recall) - brief Appendix A
+ D22 T1 REVERSE: QueueTwists.reverse(q) - base case q empty; recursive case
+    x = dequeue, reverse(rest), enqueue(x); terminates as each call removes one
+    element. Only enqueue/dequeue/isEmpty (checked by check_constraints.py);
+    the call stack is the only temporary storage. Applied to the WAITING
+    players only: the current player is not queued during the turn and is
+    enqueued at the back by playOneTurn as usual (A draws REVERSE, queue
+    B,C,D -> D,C,B, next four turns D,C,B,A). Logs REVERSE|p then ORDER|...
+    (ORDER read with one copyInto rotation after the reversal).
+ D23 T1 knock-on: PAY_EACH / COLLECT_EACH later in the game follow the new
+    queue order (brief 3.5 says "current turn-queue order"); ranking ties
+    still use join order (brief 3.7), not queue order.
+ D24 T7 RECALL: QueueTwists.rotate(q, k) - base case k <= 0 or q empty;
+    recursive case enqueue(dequeue()), rotate(q, k - 1); terminates as k falls
+    by 1. After RECALL is dequeued, n = deck.size(); rotate(deck, n - 3)
+    leaves the last 3 cards at the front in their order; RECALL then goes to
+    the back (normal card return, D14). Cost O(n).
+ D25 T7 edge cases: n <= 3 -> no change and NO RECALL line (the log format
+    needs three ids; the brief says "nothing changes"). Held JAIL_FREE cards
+    are not in the deck and are not counted. Open question Q3 below.
+ D26 T3 EXPAND: board-file lines EXPAND|<after>|<square definition>, parsed by
+    the same parseSquare() as normal squares, validated at load time (anchor
+    exists or was added by an earlier EXPAND line; new name unique; no GO /
+    JAIL / GO_TO_JAIL; EXPAND lines last; 24 + 3 <= 28 squares). Kept in a
+    LinkedQueue<Expansion> on the Board (file order = FIFO). At the end of
+    turn 20 (after the player is re-enqueued, before the end-of-game check)
+    the recursive Game.applyExpansions dequeues each line, finds the anchor
+    with findByName and calls insertAfter (O(1)). Logs EXPAND|new|after.
+    If the game ends before turn 20 the expansion never happens; with
+    --max-turns 20 the EXPAND lines come just before END.
+ D27 T3 knock-on: positions are node references, so no player moves and
+    nothing is renumbered. ownsGroup walks the live ring, so a new BLUE square
+    (Al Mina) means a previous BLUE full-group owner loses doubled rent until
+    they also own it. transitRent counts owned TRANSIT squares, so a 4th
+    transit allows 25 x 2^3 = 200. Lulu Island is inserted after the last
+    square: insertAfter sets Lulu.next = GO and GO.prev = Lulu, so step()
+    still pays the salary when it reaches goNode. size() is live, so searches
+    (remaining = size) and the board view (8 x 8 ring) adapt.
+
+4. BOARD (24 squares; 27 after the T3 expansion at turn 20)   GO(0) ... JAIL(6) ... FREE(12) ... GO_TO_JAIL(18)
    BLUE 2 (60/60), GREEN 3 (100-140), ORANGE 3 (160-200), RED 3 (220-280),
    TRANSIT 3 (200 each, rent 25/50/100), TAX 2 (100, 75), CHANCE 2, COMMUNITY 2.
+   EXPAND (T3): Al Mina BLUE 80/6 after Al Bateen; Abu Dhabi Airport Express
+   TRANSIT 200 after Metro Green Line; Lulu Island RED 300/26 after
+   Hudayriyat Island (new last square, next = GO).
 
-5. CARDS   CHANCE 10, COMMUNITY 10; all 9 standard effects covered.
+5. CARDS   CHANCE 12, COMMUNITY 12; all 9 standard effects covered, plus
+   REVERSE (C11, K11) and RECALL (C12, K12) for twists T1 and T7.
+   In 500 seeded 60-turn games: 421 REVERSE and 404 RECALL events.
    Deliberate test cases built into the files:
    - C3 NEAREST from "Chance Desk" wraps past GO to Metro Red Line (salary paid).
    - C2 "Go back 3" from "Chance" lands on Jail (just visiting, no salary).
@@ -98,6 +150,12 @@ Feeds the design document (brief Section 9). Twists deferred; bonus B4 + languag
    dice (tests and --dice), not by waiting for a random game.
 
 7. OPEN QUESTIONS FOR THE INSTRUCTOR
-   Q1 Which three twists are assigned to our group?
+   Q1 Which three twists are assigned to our group? CS chose T1, T3, T7 on
+      2026-11-06 (Conversation 03). Still to be checked against Blackboard:
+      an earlier teammate log mentioned T1, T5, T8.
    Q2 Is the --auto buy policy acceptable for scripted test games, with the
       interactive Y/N prompt as the default? (implemented, pending answer)
+   Q3 T7: when the deck holds 3 or fewer other cards, should a RECALL line
+      still be printed? (implemented: no line, D25)
+   Q4 T3: are EXPAND lines applied before the end-of-game check of turn 20?
+      (implemented: yes, D26)

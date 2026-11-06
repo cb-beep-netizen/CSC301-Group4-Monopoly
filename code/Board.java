@@ -2,7 +2,8 @@
  * Board - the CircularDoublyLinkedList<Square>, plus direct references to the
  * GO and JAIL nodes. Holds the required recursive board methods (Section 5.1).
  * No integer indices or % size are used for movement.
- * AI log: Conversation 01, Prompt 01.13 (Claude). Reviewed and understood by: ______
+ * T3 Expansion: pending EXPAND lines are kept in a LinkedQueue<Expansion>.
+ * AI log: Conversation 01, Prompt 01.13; T3 added in Conversation 03, Prompt 03.02 (Claude). Reviewed and understood by: ______
  */
 public final class Board {
     public static final int SALARY = 200;
@@ -10,6 +11,8 @@ public final class Board {
     private final CircularDoublyLinkedList<Square> squares;
     private final Node<Square> goNode;
     private final Node<Square> jailNode;
+    /** T3: EXPAND lines in file order, waiting for the end of turn 20 (FIFO). */
+    private final LinkedQueue<Expansion> pendingExpansions = new LinkedQueue<>();
 
     public Board(CircularDoublyLinkedList<Square> squares) {
         this.squares = squares;
@@ -22,6 +25,28 @@ public final class Board {
     public Node<Square> getJail() { return jailNode; }
     public int size() { return squares.size(); }
     public CircularDoublyLinkedList<Square> getSquares() { return squares; }
+
+    // ------------------------------------------------------- T3 Expansion
+
+    /** Called by FileLoader for each EXPAND line, in file order. */
+    public void addPendingExpansion(Expansion e) {
+        pendingExpansions.enqueue(e);
+    }
+
+    public LinkedQueue<Expansion> getPendingExpansions() {
+        return pendingExpansions;
+    }
+
+    /**
+     * T3: links a new square directly after 'after' (CircularDoublyLinkedList
+     * insertAfter, O(1)). Four links change: new.prev, new.next, after.next and
+     * the old next's prev. No player moves: positions are node references, so
+     * nothing has to be renumbered. If 'after' is the last square, the new
+     * node's next is GO and GO's prev becomes the new node.
+     */
+    public Node<Square> insertAfter(Node<Square> after, Square square) {
+        return squares.insertAfter(after, square);
+    }
 
     /**
      * Moves steps squares: along next if positive, along prev if negative.
