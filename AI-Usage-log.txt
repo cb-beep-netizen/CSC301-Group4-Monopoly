@@ -44,6 +44,8 @@
 |     |            |        | "Monopoly-Game"             | notes, UML, README, both PDF reports and | (shared link / PDF export: TO BE ADDED)  |
 |     |            |        |                             | this log updated; Eclipse-only build and |                                          |
 |     |            |        |                             | run (03.03-03.11); rulebook (03.12-03.13)|                                          |
+|     |            |        |                             | ; GitHub commit and README.md (03.14-    |                                          |
+|     |            |        |                             | 03.22); laptop copy (03.23-03.27)        |                                          |
 +-----+------------+--------+-----------------------------+------------------------------------------+------------------------------------------+
  Index note (added 2026-11-06, Conversation 03): row 02 was added so that the
  text log matches the log index in the AI usage PDF, which already listed the
@@ -1419,6 +1421,42 @@ i cant acces the pc rn can u update in this laptop whatever u updated there?
    in the app) to start sync-to-github.bat, which pushes the PC commits to
    GitHub; the laptop then gets everything by running its own sync.
    (Result recorded in the next entry.)
+
+[AI result 03.26]
+ - The pending log entries were committed on the PC (commit b575516). The
+   push to GitHub could not be made: computer control was not switched on
+   for the PC, the AI shell has no GitHub sign-in, and no GitHub account is
+   linked to Claude. Instead the AI sent two files to the chat: a git bundle
+   with the 5 PC commits (monopoly-update.bundle) and Apply-Monopoly-Update.bat
+   to load them into the laptop copy. CS reported the files were hard to
+   find (Prompts 03.23-03.25 above were the follow-up questions).
+
+[AI response 03.26 - summary]
+ - Download both files to the laptop and double-click the .bat; it updates
+   the laptop copy and pushes the PC commits to GitHub.
+
+[Prompt 03.27 | 2026-11-07 00:50 GST | CS]
+can u jsut send the updated monopoly folder form the pc to this computer that
+should be easier
+
+[AI actions 03.27]
+ - Checked the computer now linked to this chat: it is the laptop (device
+   "msi"), not the PC, so the PC folder could not be read directly.
+ - Rebuilt the PC copy exactly in the AI workspace: cloned the GitHub
+   repository and loaded the PC commits from monopoly-update.bundle (branch
+   CS-Monopoly at b575516, the PC's last commit). The only PC change not in
+   that commit was the 03.26 result above, which is re-entered here.
+ - Recorded this entry and committed it on CS-Monopoly with the GitHub
+   no-reply e-mail, then packed the whole project folder (including the git
+   history in .git, without bin, tests-bin and game-log.txt) as
+   Monopoly-updated.zip and placed it on the laptop / sent it to the chat.
+ - Rida's branch project_ai_v1 and the testing branch were not touched.
+
+[AI response 03.27 - summary]
+ - Laptop steps: remove the old Monopoly project from Eclipse (contents
+   kept), keep the old Monopoly-for-laptop folder as a backup, import the new
+   folder, run Monopoly - Tests, then double-click sync-to-github.bat to push
+   the PC commits and merge the second pull request CS-Monopoly -> main.
 
 ================================================================================
  PART C - AI REFLECTION (1 to 2 pages; minimum three cases)
