@@ -103,6 +103,9 @@ FILES
   .project, .classpath, .settings\   Eclipse project (import, see above)
   eclipse\*.launch        the four Run menu entries
   design\                 UML class diagram and design notes
+  CSC301_Group4_Monopoly_Rulebook.pdf   rules as implemented (our twists
+                          T1, T3, T7 highlighted), data structures drawn at
+                          pointer level, demo revision questions
 
 DATA STRUCTURES (brief Section 4)
   Board      own CircularDoublyLinkedList<Square>; positions are Node<Square>
