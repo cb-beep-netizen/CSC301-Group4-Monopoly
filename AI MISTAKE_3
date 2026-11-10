@@ -1,0 +1,20 @@
+NO BUT I DON'T THINK TRADING OR SWAPPING CASHS DURING TURNS IS ALLOWED, IN MY RULES, SO IT MIGHT VIOLATE THEM IN MY PROJECT DESCRIPTION...
+
+You are completely right, and that is a sharp catch!
+
+Section 3.4 of your project assignment description explicitly states:
+
+"No houses, hotels, mortgages, trading or auctions. A square nobody buys stays with the bank."   
+CSC301_Monopoly_Assignment.docx
+
+Implementing any property-swapping or cash-trading interface would directly violate the core rules and constraints of your Abu Dhabi University CSC301 project, potentially costing you points under the constraints and core gameplay grading criteria.   
+CSC301_Monopoly_Assignment.docx
++ 1
+
+With trading ruled out, your project implementation is functionally complete according to the official rules. Instead of adding unallowed features, your remaining focus should shift entirely to verification, compliance, and documentation to secure top marks:
+
+1. Strict Constraint & Loop Audit
+No Loops in Recursive Methods: Double-check that all mandatory recursive methods (step, takeTurn, landOn, transitRent, netWorth, ownsGroup, findByName, findNearest, and your twist methods like reverse, chainRent, or rotate) contain zero for, while, or do loops.   
+CSC301_Monopoly_Assignment.docx
+
+Banned Collections Check: Ensure no forbidden collections (like HashMap, HashSet, Stack, ArrayDeque, or Java streams) accidentally slipped into your source code. Everything must rely on your custom CircularDoublyLinkedList<T>, custom LinkedQueue<T>, and java.util.ArrayList.  
